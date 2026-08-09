@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class SupplierProduct extends Model
+{
+    protected $fillable = [
+        'supplier_id',
+        'name',
+        'sku',
+        'category',
+        'description',
+        'image',
+        'purchase_price',
+        'currency',
+        'unit',
+        'is_active',
+        'is_public_showcase',
+        'last_price_updated_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'purchase_price' => 'decimal:2',
+            'is_active' => 'boolean',
+            'is_public_showcase' => 'boolean',
+            'last_price_updated_at' => 'datetime',
+        ];
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+}
