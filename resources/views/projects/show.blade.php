@@ -1,18 +1,23 @@
 <x-layouts.app
-    :title="$project->title"
+    :title="$project->meta_title ?? $project->title"
     :meta-description="$project->meta_description"
     :og-image="$project->og_image"
 >
-    <x-slot:schema>
-        <x-schema.breadcrumbs :items="[
+    @php
+        $crumbs = [
             ['name' => 'Főoldal', 'url' => route('home')],
             ['name' => 'Referenciák', 'url' => route('projects.index')],
             ['name' => $project->title, 'url' => route('projects.show', $project)],
-        ]" />
+        ];
+    @endphp
+
+    <x-slot:schema>
+        <x-schema.breadcrumbs :items="$crumbs" />
     </x-slot:schema>
 
     <section class="py-20 bg-petrol-950">
         <div class="mx-auto max-w-4xl px-6 text-center">
+            <x-breadcrumbs :items="$crumbs" class="justify-center mb-4" />
             @if ($project->solution)
                 <p class="text-sm font-semibold uppercase tracking-widest text-gold-400">{{ $project->solution->industry_name }}</p>
             @endif

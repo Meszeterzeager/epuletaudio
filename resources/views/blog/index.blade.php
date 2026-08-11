@@ -1,13 +1,18 @@
-<x-layouts.app :title="'Tudástár'">
-    <x-slot:schema>
-        <x-schema.breadcrumbs :items="[
+<x-layouts.app :title="'Tudástár'" meta-description="Szakmai cikkek épülethangosításról, akusztikai tervezésről és rendszerválasztásról — az Épületaudio tudástára.">
+    @php
+        $crumbs = [
             ['name' => 'Főoldal', 'url' => route('home')],
             ['name' => 'Tudástár', 'url' => route('blog.index')],
-        ]" />
+        ];
+    @endphp
+
+    <x-slot:schema>
+        <x-schema.breadcrumbs :items="$crumbs" />
     </x-slot:schema>
 
     <section class="py-20 bg-petrol-950">
         <div class="mx-auto max-w-7xl px-6 text-center">
+            <x-breadcrumbs :items="$crumbs" class="justify-center mb-4" />
             <h1 class="font-display text-4xl sm:text-5xl font-semibold text-cream" data-animate="split-up">Tudástár</h1>
             <p class="mt-4 text-cream/70 max-w-2xl mx-auto" data-animate="fade-up">Szakmai cikkek hangosításról, akusztikáról és rendszertervezésről.</p>
         </div>

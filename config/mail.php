@@ -115,4 +115,22 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Markdown Mail Settings
+    |--------------------------------------------------------------------------
+    |
+    | Az "epuletaudio" téma a márka színeivel (petrol/gold/cream) felülírja
+    | a Laravel alap markdown email kinézetét minden <x-mail::message>
+    | alapú levélnél.
+    |
+    */
+
+    'markdown' => [
+        'theme' => 'epuletaudio',
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
 ];

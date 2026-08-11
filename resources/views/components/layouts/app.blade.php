@@ -37,6 +37,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 
+    <x-schema.local-business />
     {!! $schema ?? '' !!}
 </head>
 <body class="bg-cream text-ink font-sans antialiased">

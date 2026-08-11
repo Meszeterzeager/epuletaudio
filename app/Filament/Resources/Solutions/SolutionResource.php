@@ -6,6 +6,7 @@ use App\Filament\Resources\Solutions\Pages\CreateSolution;
 use App\Filament\Resources\Solutions\Pages\EditSolution;
 use App\Filament\Resources\Solutions\Pages\ListSolutions;
 use App\Filament\Resources\Solutions\Pages\ViewSolution;
+use App\Filament\Resources\Solutions\RelationManagers\ProjectsRelationManager;
 use App\Filament\Resources\Solutions\Schemas\SolutionForm;
 use App\Filament\Resources\Solutions\Schemas\SolutionInfolist;
 use App\Filament\Resources\Solutions\Tables\SolutionsTable;
@@ -46,7 +47,7 @@ class SolutionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProjectsRelationManager::class,
         ];
     }
 

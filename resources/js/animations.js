@@ -3,6 +3,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+window.addEventListener('load', () => ScrollTrigger.refresh());
+
 function splitIntoWords(el) {
     if (el.dataset.splitDone) return el.querySelectorAll(':scope > span');
 
@@ -97,11 +99,11 @@ export function initScrollAnimations() {
             {
                 opacity: 1,
                 y: 0,
-                duration: 0.8,
+                duration: 0.5,
                 ease: 'power2.out',
                 scrollTrigger: {
                     trigger: el,
-                    start: 'top 85%',
+                    start: 'top 90%',
                     toggleActions: 'play none none none',
                 },
             }
@@ -118,12 +120,12 @@ export function initScrollAnimations() {
             {
                 yPercent: 0,
                 opacity: 1,
-                duration: 0.7,
+                duration: 0.5,
                 ease: 'power3.out',
-                stagger: 0.045,
+                stagger: 0.025,
                 scrollTrigger: {
                     trigger: el,
-                    start: 'top 88%',
+                    start: 'top 92%',
                     toggleActions: 'play none none none',
                 },
             }
@@ -140,12 +142,12 @@ export function initScrollAnimations() {
             {
                 opacity: 1,
                 y: 0,
-                duration: 0.6,
+                duration: 0.4,
                 ease: 'power2.out',
-                stagger: 0.1,
+                stagger: 0.06,
                 scrollTrigger: {
                     trigger: group,
-                    start: 'top 80%',
+                    start: 'top 85%',
                     toggleActions: 'play none none none',
                 },
             }
@@ -189,6 +191,9 @@ export function initSmoothScroll() {
             lenis.raf(time * 1000);
         });
         gsap.ticker.lagSmoothing(0);
+
+        ScrollTrigger.addEventListener('refresh', () => lenis.resize());
+        ScrollTrigger.refresh();
 
         return lenis;
     });

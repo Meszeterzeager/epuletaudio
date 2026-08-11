@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\QuoteRequests\Schemas;
 
+use App\Models\QuoteRequest;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -13,6 +14,38 @@ class QuoteRequestInfolist
     {
         return $schema
             ->components([
+                Section::make('Árrés és nyereség')
+                    ->description('Csak admin számára látható — az ügyfélnek küldött ajánlatban sosem jelenik meg.')
+                    ->icon('heroicon-o-banknotes')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('revenue')
+                            ->label('Ajánlat összege (nettó)')
+                            ->state(fn (QuoteRequest $record) => static::revenue($record))
+                            ->money('HUF'),
+                        TextEntry::make('cost')
+                            ->label('Beszerzési költség (nettó)')
+                            ->state(fn (QuoteRequest $record) => static::cost($record))
+                            ->money('HUF'),
+                        TextEntry::make('margin')
+                            ->label('Árrés (nyereség, nettó)')
+                            ->state(fn (QuoteRequest $record) => static::revenue($record) - static::cost($record))
+                            ->money('HUF')
+                            ->weight('bold')
+                            ->color(fn (QuoteRequest $record): string => (static::revenue($record) - static::cost($record)) >= 0 ? 'success' : 'danger'),
+                        TextEntry::make('margin_percent')
+                            ->label('Árrés %')
+                            ->state(function (QuoteRequest $record): string {
+                                $revenue = static::revenue($record);
+
+                                if ($revenue <= 0) {
+                                    return '-';
+                                }
+
+                                return number_format((($revenue - static::cost($record)) / $revenue) * 100, 1).' %';
+                            })
+                            ->columnSpanFull(),
+                    ]),
                 Section::make('Kapcsolattartó')
                     ->columns(2)
                     ->schema([
@@ -146,5 +179,20 @@ class QuoteRequestInfolist
                             ->placeholder('-'),
                     ]),
             ]);
+    }
+
+    private static function revenue(QuoteRequest $record): float
+    {
+        return (float) $record->items()->get()
+            ->sum(fn ($item) => $item->quantity * (float) $item->unit_price);
+    }
+
+    private static function cost(QuoteRequest $record): float
+    {
+        return (float) $record->items()
+            ->where('item_type', 'product')
+            ->with('supplierProduct')
+            ->get()
+            ->sum(fn ($item) => $item->quantity * (float) ($item->supplierProduct?->purchase_price ?? 0));
     }
 }

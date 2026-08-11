@@ -9,6 +9,7 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class SupplierProductsTable
@@ -28,6 +29,11 @@ class SupplierProductsTable
                     ->searchable(),
                 ImageColumn::make('image'),
                 TextColumn::make('purchase_price')
+                    ->label('Beszerzési ár')
+                    ->money()
+                    ->sortable(),
+                TextColumn::make('selling_price')
+                    ->label('Eladási ár')
                     ->money()
                     ->sortable(),
                 TextColumn::make('currency')
@@ -51,7 +57,9 @@ class SupplierProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('supplier_id')
+                    ->label('Beszállító')
+                    ->relationship('supplier', 'name'),
             ])
             ->recordActions([
                 ViewAction::make(),

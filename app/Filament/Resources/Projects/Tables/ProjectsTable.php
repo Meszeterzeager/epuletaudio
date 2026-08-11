@@ -8,6 +8,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class ProjectsTable
@@ -27,6 +29,8 @@ class ProjectsTable
                 TextColumn::make('completed_at')
                     ->date()
                     ->sortable(),
+                ToggleColumn::make('is_active')
+                    ->label('Aktív'),
                 TextColumn::make('meta_title')
                     ->searchable(),
                 TextColumn::make('meta_description')
@@ -42,7 +46,8 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_active')
+                    ->label('Aktív'),
             ])
             ->recordActions([
                 ViewAction::make(),

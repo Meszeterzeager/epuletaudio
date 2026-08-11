@@ -7,6 +7,7 @@ use App\Models\Solution;
 use App\Services\ImageOptimizer;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectSeeder extends Seeder
 {
@@ -16,6 +17,9 @@ class ProjectSeeder extends Seeder
      */
     public function run(): void
     {
+        // Csak 1 db minta marad, amíg valódi referenciafotó és leírás nem
+        // érkezik — a Referenciák menüpont is kikapcsolt állapotban van
+        // alapból (ld. SiteSettingsSeeder / Setting::get('references_enabled')).
         $projects = [
             [
                 'solution_slug' => 'templomok',
@@ -25,33 +29,6 @@ class ProjectSeeder extends Seeder
                 'label' => 'DEMO - TEMPLOM',
                 'completed_at' => now()->subMonths(7),
                 'description' => 'Ez egy demonstrációs referencia, amíg a valódi projektfotók és leírás feltöltésre kerülnek. Egy tipikus templomi épülethangosítási projekt jellemzően zónánként vezérelt hangfalakból, mikrofonos bemondó egységből, és a hosszú utózengési időhöz igazított beszédérthetőségi tervezésből áll.',
-            ],
-            [
-                'solution_slug' => 'fogaszatok-rendelok',
-                'slug' => 'minta-referencia-rendelo',
-                'title' => 'Minta referencia — rendelői háttérhangosítás',
-                'location' => 'Demó helyszín',
-                'label' => 'DEMO - RENDELO',
-                'completed_at' => now()->subMonths(4),
-                'description' => 'Ez egy demonstrációs referencia, amíg a valódi projektfotók és leírás feltöltésre kerülnek. Fogászati és orvosi rendelőkben a cél jellemzően a nyugtató háttérzene zónánkénti, alacsony hangnyomású, diszkrét megvalósítása.',
-            ],
-            [
-                'solution_slug' => 'kavezok-vendeglatas',
-                'slug' => 'minta-referencia-kavezo',
-                'title' => 'Minta referencia — kávézó hangulathangosítás',
-                'location' => 'Demó helyszín',
-                'label' => 'DEMO - KAVEZO',
-                'completed_at' => now()->subMonths(2),
-                'description' => 'Ez egy demonstrációs referencia, amíg a valódi projektfotók és leírás feltöltésre kerülnek. Vendéglátóhelyeken a hangulat és a zajszint egyensúlya a legfontosabb szempont a hangfalak elhelyezésénél.',
-            ],
-            [
-                'solution_slug' => 'kozuletek-intezmenyek',
-                'slug' => 'minta-referencia-kozulet',
-                'title' => 'Minta referencia — intézményi központi hangosítás',
-                'location' => 'Demó helyszín',
-                'label' => 'DEMO - KOZULET',
-                'completed_at' => now()->subMonth(),
-                'description' => 'Ez egy demonstrációs referencia, amíg a valódi projektfotók és leírás feltöltésre kerülnek. Közületeknél és intézményeknél a központi vezérlés és a 100V-os, könnyen bővíthető rendszer a jellemző megoldás.',
             ],
         ];
 
@@ -69,6 +46,7 @@ class ProjectSeeder extends Seeder
                 ]
             );
 
+            Storage::disk('public')->delete($project->images()->pluck('path')->all());
             $project->images()->delete();
 
             foreach ([1, 2] as $order) {

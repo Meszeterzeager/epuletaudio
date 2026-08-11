@@ -1,0 +1,34 @@
+# Épületaudio
+
+> Az Épületaudio magyarországi cég, amely épülethangosítási és professzionális hangtechnikai rendszereket tervez, telepít és tart karban — helyszíni akusztikai felméréstől a kivitelezésig és átadásig. Az ügyfélkör templomokat, egészségügyi rendelőket, vendéglátóhelyeket és hoteleket, irodákat és konferenciatermeket, kereskedelmi egységeket és showroomokat, oktatási és közintézményeket, ipari csarnokokat és raktárakat, valamint sportlétesítményeket foglal magába.
+
+## Szolgáltatások
+
+- [Épülethangosítás](https://epuletaudio.hu/szolgaltatasok/epulethangositas): 100V-os, zónánként vezérelt hangrendszer tervezése és telepítése nagy kiterjedésű épületekhez.
+- [Konferenciarendszerek](https://epuletaudio.hu/szolgaltatasok/konferenciarendszerek): mikrofon, digitális keverő/DSP és videokonferencia- (Teams/Zoom) integráció tárgyalókhoz, tanácstermekhez.
+- [Tourguide-rendszerek](https://epuletaudio.hu/szolgaltatasok/tourguide-rendszerek): vezetőmikrofon és vezeték nélküli fülhallgató-vevők vezetett túrákhoz, üzemi bejárásokhoz, múzeumoknak.
+- [Mobil hangosítás](https://epuletaudio.hu/szolgaltatasok/mobil-hangositas): kompakt, telepíthető hangrendszerek rendezvényekre és alkalmi eseményekre.
+- [Vészhangosítás & Evakuáció (EVAC)](https://epuletaudio.hu/szolgaltatasok/veszhangositas-evakuacio): szabványos, tűzjelzővel integrált evakuációs bemondórendszer.
+- [Ablaküveg-átbeszélő rendszer recepciókra](https://epuletaudio.hu/szolgaltatasok/ablak-atbeszelo-recepcio): mikrofon-hangszóró egység biztonsági/higiéniai üveg- vagy plexifal mögötti kommunikációhoz.
+
+## Megoldások iparág szerint
+
+- [Ipari csarnokok & Raktárak](https://epuletaudio.hu/megoldasok/ipar-logisztika)
+- [Vendéglátás & Hotelek](https://epuletaudio.hu/megoldasok/kavezok-vendeglatas)
+- [Egészségügy & Magánrendelők](https://epuletaudio.hu/megoldasok/fogaszatok-rendelok)
+- [Irodák & Konferenciatermek](https://epuletaudio.hu/megoldasok/irodak-konferencia)
+- [Kereskedelem & Showroomok](https://epuletaudio.hu/megoldasok/kereskedelem-uzletek)
+- [Oktatás & Közintézmények](https://epuletaudio.hu/megoldasok/kozuletek-intezmenyek)
+- [Templomok & Műemlékek](https://epuletaudio.hu/megoldasok/templomok)
+- [Sport & Szabadidő](https://epuletaudio.hu/megoldasok/sport-szabadido)
+
+## Egyéb
+
+- [Tudástár](https://epuletaudio.hu/tudastar): szakmai cikkek akusztikai felmérésről, rendszerválasztásról és tervezési szempontokról.
+- [Rólunk](https://epuletaudio.hu/rolunk): a cég munkamódja, folyamata a felméréstől az átadásig.
+- [Kapcsolat](https://epuletaudio.hu/kapcsolat): elérhetőségek.
+- [Ajánlatkérés](https://epuletaudio.hu/ajanlatkeres): részletes, díjmentes ajánlatkérő űrlap.
+
+## Megjegyzés
+
+Az admin felület (`/admin`) és a webhook végpontok (`/webhooks`) nem nyilvános tartalom, ezeket a robots.txt is kizárja.

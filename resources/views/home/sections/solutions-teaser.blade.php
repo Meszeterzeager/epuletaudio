@@ -8,9 +8,9 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6" data-animate-group>
+            <div class="grid grid-flow-col auto-cols-[70%] sm:auto-cols-fr sm:grid-flow-row sm:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible pb-2 -mx-6 px-6 sm:mx-0 sm:px-0 snap-x snap-mandatory sm:snap-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-animate-group>
                 @foreach ($solutions as $solution)
-                    <div data-animate-item>
+                    <div class="snap-start" data-animate-item>
                         <x-solution-card :solution="$solution" />
                     </div>
                 @endforeach

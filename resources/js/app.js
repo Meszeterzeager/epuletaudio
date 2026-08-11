@@ -2,35 +2,18 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 import { initScrollAnimations, initSmoothScroll } from './animations';
 import { initPageTransitions } from './transitions';
+import { initHeroDiagramFlow } from './hero-diagram';
 
 window.Alpine = Alpine;
 Alpine.start();
 
-initScrollAnimations();
 initSmoothScroll();
 initPageTransitions();
 
-let heroCleanup = null;
-
-function initHeroForCurrentPage() {
-    const heroCanvas = document.getElementById('hero-canvas');
-    if (!heroCanvas) return;
-
-    import('./hero3d').then(({ initHero3D }) => {
-        heroCleanup = initHero3D(heroCanvas) || null;
-    });
-}
-
-initHeroForCurrentPage();
-
-document.addEventListener('livewire:navigate', () => {
-    if (heroCleanup) {
-        heroCleanup();
-        heroCleanup = null;
-    }
-});
-
+// livewire:navigated fires on the initial page load too, not just on
+// subsequent wire:navigate transitions — using it as the single source
+// avoids double-initializing (and double-killing) ScrollTrigger instances.
 document.addEventListener('livewire:navigated', () => {
     initScrollAnimations();
-    initHeroForCurrentPage();
+    initHeroDiagramFlow();
 });

@@ -15,7 +15,7 @@ class SolutionController extends Controller
 
     public function show(Solution $solution)
     {
-        $solution->load(['projects' => fn ($query) => $query->with('images')->take(6)]);
+        $solution->load(['projects' => fn ($query) => $query->where('is_active', true)->with('images')->take(6)]);
 
         return view('solutions.show', ['solution' => $solution]);
     }

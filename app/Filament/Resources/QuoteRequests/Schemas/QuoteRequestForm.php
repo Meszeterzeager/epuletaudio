@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\QuoteRequests\Schemas;
 
+use App\Models\QuoteRequest;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -194,12 +195,7 @@ class QuoteRequestForm
                     ->schema([
                         Select::make('status')
                             ->label('Státusz')
-                            ->options([
-                                'new' => 'Új',
-                                'contacted' => 'Kapcsolatba léptünk',
-                                'quoted' => 'Ajánlat kiküldve',
-                                'closed' => 'Lezárva',
-                            ])
+                            ->options(QuoteRequest::STATUSES)
                             ->default('new')
                             ->required(),
                         Textarea::make('internal_notes')

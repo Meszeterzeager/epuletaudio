@@ -14,6 +14,7 @@ class EditQuoteRequest extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            QuoteRequestResource::sendOfferAction(),
             ViewAction::make(),
             DeleteAction::make(),
         ];

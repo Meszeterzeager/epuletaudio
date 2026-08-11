@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\QuoteRequests\Tables;
 
 use App\Filament\Resources\QuoteRequests\Schemas\QuoteRequestForm;
+use App\Models\QuoteRequest;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -50,18 +50,12 @@ class QuoteRequestsTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'new' => 'danger',
-                        'contacted' => 'warning',
-                        'quoted' => 'info',
-                        'closed' => 'success',
+                        'quote_issued' => 'info',
+                        'ordered' => 'success',
+                        'postponed' => 'warning',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'new' => 'Új',
-                        'contacted' => 'Kapcsolatba léptünk',
-                        'quoted' => 'Ajánlat kiküldve',
-                        'closed' => 'Lezárva',
-                        default => $state,
-                    }),
+                    ->formatStateUsing(fn (string $state): string => QuoteRequest::STATUSES[$state] ?? $state),
                 TextColumn::make('created_at')
                     ->label('Beérkezett')
                     ->dateTime('Y-m-d H:i')
@@ -71,12 +65,7 @@ class QuoteRequestsTable
             ->filters([
                 SelectFilter::make('status')
                     ->label('Státusz')
-                    ->options([
-                        'new' => 'Új',
-                        'contacted' => 'Kapcsolatba léptünk',
-                        'quoted' => 'Ajánlat kiküldve',
-                        'closed' => 'Lezárva',
-                    ]),
+                    ->options(QuoteRequest::STATUSES),
                 SelectFilter::make('building_type')
                     ->label('Épület típusa')
                     ->options(QuoteRequestForm::BUILDING_TYPES),

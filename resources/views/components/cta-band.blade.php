@@ -1,4 +1,4 @@
-@props(['title' => 'Kérj ajánlatot 2 percben', 'subtitle' => null])
+@props(['title' => 'Kérj ajánlatot 2 perc alatt', 'subtitle' => null])
 
 <section class="mx-auto max-w-7xl px-6 my-24">
     <div class="rounded-3xl bg-petrol-900 px-8 py-16 sm:px-16 text-center" data-animate="fade-up">

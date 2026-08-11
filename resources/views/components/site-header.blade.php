@@ -2,10 +2,11 @@
     $navLinks = [
         ['label' => 'Szolgáltatások', 'route' => 'services.index'],
         ['label' => 'Megoldások', 'route' => 'solutions.index'],
-        ['label' => 'Referenciák', 'route' => 'projects.index'],
+        ['label' => 'Referenciák', 'route' => 'projects.index', 'visible' => \App\Models\Setting::getBool('references_enabled')],
         ['label' => 'Rólunk', 'route' => 'about'],
         ['label' => 'Tudástár', 'route' => 'blog.index'],
     ];
+    $navLinks = array_values(array_filter($navLinks, fn ($link) => $link['visible'] ?? true));
 @endphp
 
 <header x-data="{ mobileOpen: false }" class="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-petrol-100">

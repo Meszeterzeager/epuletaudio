@@ -1,10 +1,10 @@
 @php
     $steps = [
-        ['title' => 'Felmérés', 'description' => 'Helyszíni bejárás, igényfelmérés, akusztikai szempontok tisztázása.'],
+        ['title' => 'Felmérés', 'description' => 'Igényfelmérés, akusztikai szempontok tisztázása, igény szerint helyszíni bejárás.'],
         ['title' => 'Terv', 'description' => 'Rendszerterv, technológiai javaslat, árajánlat összeállítása.'],
         ['title' => 'Kivitelezés', 'description' => 'Telepítés, kábelezés, beüzemelés a helyszínen.'],
         ['title' => 'Átadás', 'description' => 'Betanítás, dokumentáció, végleges beállítások.'],
-        ['title' => 'Support', 'description' => 'Karbantartás, bővítés, technikai támogatás igény esetén.'],
+        ['title' => 'Támogatás', 'description' => 'Karbantartás, bővítés, technikai támogatás igény esetén.'],
     ];
 @endphp
 

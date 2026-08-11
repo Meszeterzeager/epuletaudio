@@ -15,6 +15,7 @@ class Project extends Model
         'description',
         'location',
         'completed_at',
+        'is_active',
         'meta_title',
         'meta_description',
         'og_image',
@@ -24,6 +25,7 @@ class Project extends Model
     {
         return [
             'completed_at' => 'date',
+            'is_active' => 'boolean',
         ];
     }
 

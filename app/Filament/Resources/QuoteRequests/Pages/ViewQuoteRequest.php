@@ -13,6 +13,7 @@ class ViewQuoteRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            QuoteRequestResource::sendOfferAction(),
             EditAction::make(),
         ];
     }

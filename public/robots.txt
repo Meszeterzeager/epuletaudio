@@ -1,5 +1,7 @@
 User-agent: *
+Allow: /
 Disallow: /admin
 Disallow: /livewire
+Disallow: /webhooks
 
 Sitemap: https://epuletaudio.hu/sitemap.xml

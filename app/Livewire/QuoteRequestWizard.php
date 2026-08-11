@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Mail\QuoteRequestConfirmation;
 use App\Mail\QuoteRequestReceivedAdmin;
 use App\Models\QuoteRequest;
+use App\Models\Setting;
 use App\Services\ImageOptimizer;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -73,42 +74,64 @@ class QuoteRequestWizard extends Component
 
     // 1. lépés — kapcsolattartó
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $company = '';
 
     // 2. lépés — projekt típusa és tér jellege
     public string $building_type = '';
+
     public array $requested_systems = [];
+
     public string $space_character = '';
+
     public ?float $width_m = null;
+
     public ?float $length_m = null;
+
     public ?float $ceiling_height_m = null;
 
     // 3. lépés — hangfal-preferencia, stádium, forráseszközök
     public array $speaker_preference = [];
+
     public string $project_stage = '';
+
     public array $source_equipment = [];
+
     public ?int $room_count = null;
+
     public ?int $source_count = null;
+
     public ?float $area_sqm = null;
+
     public bool $existing_system = false;
+
     public string $existing_system_notes = '';
 
     // 4. lépés — prioritások, keret, kivitelezés
     public string $priority = '';
+
     public string $budget_huf = '';
+
     public bool $wants_installation = false;
+
     public bool $wants_site_survey = false;
 
     // 5. lépés — csatolmányok
     public array $floor_plans = [];
+
     public array $photos = [];
+
     public string $video_url = '';
 
     // 6. lépés — egyéb / összegzés
     public string $message = '';
+
     public string $preferred_timeframe = '';
+
     public bool $gdpr_consent = false;
 
     public bool $submitted = false;
@@ -236,7 +259,12 @@ class QuoteRequestWizard extends Component
         }
 
         Mail::to($this->email)->send(new QuoteRequestConfirmation($quoteRequest));
-        Mail::to(config('company.email'))->send(new QuoteRequestReceivedAdmin($quoteRequest));
+
+        $notificationEmails = Setting::getEmailList('notification_email');
+
+        if (! empty($notificationEmails)) {
+            Mail::to($notificationEmails)->send(new QuoteRequestReceivedAdmin($quoteRequest));
+        }
 
         $this->submitted = true;
     }

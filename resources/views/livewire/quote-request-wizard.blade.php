@@ -19,8 +19,20 @@
             </a>
         </div>
     @else
-        <div class="mb-10 overflow-x-auto">
-            <ol class="flex items-center justify-between min-w-[560px] sm:min-w-0">
+        <div class="mb-10">
+            {{-- Mobil: kompakt "X/6" jelző + haladási sáv, hogy ne kelljen oldalra görgetni --}}
+            <div class="sm:hidden">
+                <div class="flex items-center justify-between text-sm font-medium text-ink mb-2">
+                    <span>{{ $step }}. lépés / {{ count($stepLabels) }}</span>
+                    <span class="text-ink/60">{{ $stepLabels[$step - 1] }}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-petrol-100 overflow-hidden">
+                    <div class="h-full bg-petrol-900 rounded-full transition-all duration-300" style="width: {{ ($step / count($stepLabels)) * 100 }}%"></div>
+                </div>
+            </div>
+
+            {{-- sm+: teljes, számozott lépéssor --}}
+            <ol class="hidden sm:flex items-center justify-between">
                 @foreach ($stepLabels as $index => $label)
                     @php $n = $index + 1; @endphp
                     <li class="flex-1 flex flex-col items-center gap-2 relative">
@@ -291,7 +303,7 @@
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" wire:model="gdpr_consent" class="mt-0.5 rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                             <span class="text-sm text-ink">
-                                Hozzájárulok, hogy a megadott adataimat az ajánlatkészítés céljából kezeljék. *
+                                Elfogadom az <a href="{{ route('legal.privacy') }}" target="_blank" class="underline hover:text-petrol-900">Adatkezelési Tájékoztatót</a> és hozzájárulok adataim kezeléséhez az árajánlatadás érdekében. *
                             </span>
                         </label>
                         @error('gdpr_consent') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

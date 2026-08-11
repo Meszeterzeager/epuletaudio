@@ -15,6 +15,7 @@ class SupplierProduct extends Model
         'description',
         'image',
         'purchase_price',
+        'selling_price',
         'currency',
         'unit',
         'is_active',
@@ -26,6 +27,7 @@ class SupplierProduct extends Model
     {
         return [
             'purchase_price' => 'decimal:2',
+            'selling_price' => 'decimal:2',
             'is_active' => 'boolean',
             'is_public_showcase' => 'boolean',
             'last_price_updated_at' => 'datetime',

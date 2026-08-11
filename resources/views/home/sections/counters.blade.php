@@ -1,8 +1,8 @@
 @php
     $counters = [
-        ['value' => 150, 'suffix' => '+', 'label' => 'megvalósult projekt'],
-        ['value' => 12, 'suffix' => '+', 'label' => 'év szakmai tapasztalat'],
-        ['value' => 5, 'suffix' => '', 'label' => 'iparági szegmens'],
+        ['value' => 50000, 'suffix' => '+ m', 'label' => 'Befűzött és bemért 100V-os kábelhálózat'],
+        ['value' => 100, 'suffix' => '+', 'label' => 'Egyedileg tervezett többzónás audio rendszer'],
+        ['value' => 8, 'suffix' => ' iparág', 'label' => 'Testreszabott akusztikai és bemondó megoldás'],
     ];
 @endphp
 
@@ -29,7 +29,7 @@
                 "
             >
                 <div class="font-display text-5xl font-semibold text-petrol-900">
-                    <span x-text="shown"></span>{{ $counter['suffix'] }}
+                    <span x-text="shown.toLocaleString('hu-HU')"></span>{{ $counter['suffix'] }}
                 </div>
                 <p class="mt-2 text-ink/60">{{ $counter['label'] }}</p>
             </div>

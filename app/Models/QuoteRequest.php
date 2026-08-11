@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PurchaseOrderGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -58,5 +59,31 @@ class QuoteRequest extends Model
     public function files(): HasMany
     {
         return $this->hasMany(QuoteRequestFile::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(QuoteRequestItem::class)->orderBy('order');
+    }
+
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
+
+    public const STATUSES = [
+        'new' => 'Új',
+        'quote_issued' => 'Ajánlat kiadva',
+        'ordered' => 'Ajánlat lerendelve',
+        'postponed' => 'Ajánlat elhalasztva',
+    ];
+
+    protected static function booted(): void
+    {
+        static::updated(function (QuoteRequest $quoteRequest): void {
+            if ($quoteRequest->wasChanged('status') && $quoteRequest->status === 'ordered') {
+                app(PurchaseOrderGenerator::class)->generateForQuoteRequest($quoteRequest);
+            }
+        });
     }
 }
