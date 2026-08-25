@@ -212,19 +212,26 @@ class Mailbox
 
     /**
      * Egy idézett (nem a mi rendszerünkben keletkezett, hanem egy külső
-     * beérkező levélből származó) HTML töredék a lehetséges script/esemény
-     * kezelő vektorok minimális eltávolítása — nem teljes HTML-sanitizáló,
-     * csak a nyilvánvaló XSS-vektorokat szűri ki, mielőtt a válaszba
-     * beépülne és kimenne egy külső címzettnek.
+     * beérkező levélből származó) HTML töredék tisztítása egy valódi
+     * allowlist-alapú HTML-sanitizálóval (HTMLPurifier), mielőtt a
+     * válaszba/továbbításba beépülne és kimenne egy külső címzettnek —
+     * csak az explicit engedélyezett tageken/attribútumokon jut át bármi,
+     * úgyhogy nincs regex-alapú megkerülési lehetőség (pl. hiányzó
+     * szóköz az on-eseménykezelő előtt, szokatlan tagek stb.).
      */
     private static function stripDangerousHtml(string $html): string
     {
-        $html = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html) ?? $html;
-        $html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html) ?? $html;
-        $html = preg_replace('/\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html) ?? $html;
-        $html = preg_replace('/\s(href|src)\s*=\s*("javascript:[^"]*"|\'javascript:[^\']*\')/i', '', $html) ?? $html;
+        $config = \HTMLPurifier_Config::createDefault();
+        $config->set('Cache.SerializerPath', storage_path('app/htmlpurifier-cache'));
+        $config->set('HTML.Allowed', 'p,br,div,span,strong,b,em,i,u,ul,ol,li,blockquote,a[href],table,thead,tbody,tr,td,th,h1,h2,h3,h4,h5,h6,img[src|alt|width|height]');
+        $config->set('HTML.TargetBlank', true);
+        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
 
-        return $html;
+        if (! is_dir(storage_path('app/htmlpurifier-cache'))) {
+            mkdir(storage_path('app/htmlpurifier-cache'), recursive: true);
+        }
+
+        return (new \HTMLPurifier($config))->purify($html);
     }
 
     /**

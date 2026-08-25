@@ -30,6 +30,7 @@ class SolutionInfolist
                     ->placeholder('-')
                     ->columnSpanFull(),
                 ImageEntry::make('hero_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('order')
                     ->numeric(),
@@ -38,6 +39,7 @@ class SolutionInfolist
                 TextEntry::make('meta_description')
                     ->placeholder('-'),
                 ImageEntry::make('og_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

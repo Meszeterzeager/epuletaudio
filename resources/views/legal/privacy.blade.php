@@ -28,7 +28,9 @@
                 <li><strong>Székhely:</strong> {{ config('company.address') }}</li>
                 <li><strong>Adószám:</strong> {{ config('company.tax_number') }}</li>
                 <li><strong>E-mail:</strong> <a href="mailto:{{ config('company.email') }}">{{ config('company.email') }}</a></li>
-                <li><strong>Telefonszám:</strong> {{ config('company.phone') }}</li>
+                @if (config('company.phone'))
+                    <li><strong>Telefonszám:</strong> {{ config('company.phone') }}</li>
+                @endif
             </ul>
 
             <h2>2. A kezelt adatok köre, célja és jogalapja</h2>

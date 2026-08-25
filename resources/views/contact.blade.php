@@ -14,9 +14,9 @@
         <div class="mx-auto max-w-4xl px-6 text-center">
             <x-breadcrumbs :items="$crumbs" class="justify-center mb-4" />
             <p class="text-sm font-semibold uppercase tracking-widest text-gold-400" data-animate="fade-up">Kapcsolat</p>
-            <h1 class="mt-4 font-display text-4xl sm:text-5xl font-semibold text-cream" data-animate="split-up">Írj vagy hívj minket</h1>
+            <h1 class="mt-4 font-display text-4xl sm:text-5xl font-semibold text-cream" data-animate="split-up">Írj nekünk</h1>
             <p class="mt-4 text-cream/70 max-w-2xl mx-auto" data-animate="fade-up">
-                Egy gyors kérdésre e-mailben vagy telefonon is válaszolunk — ha viszont már tudod, milyen épületről és milyen rendszerről van szó, a részletes ajánlatkérő űrlapunkkal gyorsabban célba érünk.
+                Egy gyors kérdésre e-mailben válaszolunk — ha viszont már tudod, milyen épületről és milyen rendszerről van szó, a részletes ajánlatkérő űrlapunkkal gyorsabban célba érünk.
             </p>
         </div>
     </section>
@@ -55,5 +55,5 @@
         </div>
     </section>
 
-    <x-cta-band title="Inkább részletes ajánlatot kérnél?" subtitle="Töltsd ki az 5 lépéses ajánlatkérő űrlapot, és pontos, a helyszínre szabott ajánlattal jelentkezünk." />
+    <x-cta-band title="Inkább részletes ajánlatot kérnél?" subtitle="Töltsd ki a 6 lépéses ajánlatkérő űrlapot, és pontos, a helyszínre szabott ajánlattal jelentkezünk." />
 </x-layouts.app>

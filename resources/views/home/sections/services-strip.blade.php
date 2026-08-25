@@ -19,15 +19,27 @@
                         maxSpeed: 3.5,
                         singleSetWidth: 0,
                         reducedMotion: false,
+                        loopToken: 0,
                         init() {
                             this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                             this.singleSetWidth = this.$refs.track.scrollWidth / 2;
+                            const el = this.$refs.servicesStrip;
+                            // wire:navigate can re-run init() on an element that never got torn
+                            // down (e.g. navigating back to the home page); tagging the element
+                            // with a token lets any earlier, still-running loop for this same
+                            // node detect it's been superseded and stop, instead of stacking
+                            // multiple loops on top of each other and making the strip fly.
+                            this.loopToken = (el._servicesStripLoopToken || 0) + 1;
+                            el._servicesStripLoopToken = this.loopToken;
                             if (!this.reducedMotion) {
                                 requestAnimationFrame(() => this.loop());
                             }
                         },
                         loop() {
                             const el = this.$refs.servicesStrip;
+                            if (!el || !el.isConnected || el._servicesStripLoopToken !== this.loopToken) {
+                                return;
+                            }
                             this.speed += (this.targetSpeed - this.speed) * 0.06;
                             el.scrollLeft += this.speed;
                             if (el.scrollLeft >= this.singleSetWidth) {
@@ -64,7 +76,7 @@
                     @endforeach
                     @if ($services->count() > 3)
                         @foreach ($services as $service)
-                            <div aria-hidden="true">
+                            <div inert aria-hidden="true">
                                 <x-service-card :service="$service" />
                             </div>
                         @endforeach

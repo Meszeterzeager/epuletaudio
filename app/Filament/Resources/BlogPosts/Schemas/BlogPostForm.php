@@ -26,6 +26,7 @@ class BlogPostForm
                     ->columnSpanFull(),
                 FileUpload::make('cover_image')
                     ->image()
+                    ->disk('public')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1920, 1080)),
                 DateTimePicker::make('published_at'),
                 TextInput::make('meta_title')
@@ -34,6 +35,7 @@ class BlogPostForm
                     ->default(null),
                 FileUpload::make('og_image')
                     ->image()
+                    ->disk('public')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1200, 630)),
             ]);
     }

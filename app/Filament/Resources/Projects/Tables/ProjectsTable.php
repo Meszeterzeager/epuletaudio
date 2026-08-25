@@ -35,7 +35,8 @@ class ProjectsTable
                     ->searchable(),
                 TextColumn::make('meta_description')
                     ->searchable(),
-                ImageColumn::make('og_image'),
+                ImageColumn::make('og_image')
+                    ->disk('public'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

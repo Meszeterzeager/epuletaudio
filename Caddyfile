@@ -33,6 +33,19 @@
 		root * "{$APP_PUBLIC_PATH}"
 		encode zstd br gzip
 
+		# Hosszú, "immutable" gyorsítótár a Vite build kimenetéhez és a
+		# storage-ba feltöltött fájlokhoz — mindkettő véletlenszerű/hash-elt
+		# fájlnévvel kerül mentésre, így egy adott URL tartalma sosem
+		# változik, csak új fájlnévvel jelenne meg egy csere esetén.
+		@immutableAssets path /build/* /storage/*
+		header @immutableAssets Cache-Control "public, max-age=31536000, immutable"
+
+		# Rövidebb, de a korábbi 4 óránál jóval hosszabb gyorsítótár a
+		# statikus képeknek/betűtípusoknak, amik helyben cserélődhetnek
+		# ugyanazon a néven (pl. logó, favicon).
+		@staticAssets path /images/* /fonts/* /favicon.ico /favicon-16x16.png /favicon-32x32.png /apple-touch-icon.png
+		header @staticAssets Cache-Control "public, max-age=604800"
+
 		# Mercure configuration is injected here...
 		{$CADDY_SERVER_EXTRA_DIRECTIVES}
 

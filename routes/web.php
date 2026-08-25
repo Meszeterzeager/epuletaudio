@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::post('/webhooks/resend/inbound', [ResendInboundWebhookController::class, 'handle'])
+    ->middleware('throttle:60,1')
     ->name('webhooks.resend.inbound');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

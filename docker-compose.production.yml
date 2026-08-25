@@ -4,9 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    command: ["php", "artisan", "octane:start", "--server=frankenphp", "--host=0.0.0.0", "--port=80", "--admin-port=2019", "--workers=2", "--caddyfile=/app/Caddyfile"]
-    ports:
-      - "127.0.0.3:8081:80"
+    command: ["php", "artisan", "octane:start", "--server=frankenphp", "--host=0.0.0.0", "--port=80", "--admin-port=2019", "--workers=1", "--max-requests=500", "--caddyfile=/app/Caddyfile"]
     env_file: .env
     environment:
       TZ: Europe/Budapest
@@ -16,12 +14,16 @@ services:
       CACHE_STORE: redis
       SESSION_DRIVER: redis
       RUN_MIGRATIONS: "true"
+      SERVER_NAME: ${SERVER_NAME}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
-      - .:/app
-      - vendor_data:/app/vendor
       - ./storage/app:/app/storage/app
-      - ./storage/logs:/app/storage/logs
-      - ./docker/php.dev.ini:/usr/local/etc/php/conf.d/99-dev.ini
+      - app_logs:/app/storage/logs
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on:
       mysql:
         condition: service_healthy
@@ -29,19 +31,13 @@ services:
         condition: service_healthy
     networks:
       - epa_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   queue:
     build:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600", "--memory=192"]
     env_file: .env
     environment:
       TZ: Europe/Budapest
@@ -50,11 +46,11 @@ services:
       QUEUE_CONNECTION: redis
       CACHE_STORE: redis
       SESSION_DRIVER: redis
+    healthcheck:
+      disable: true
     volumes:
-      - .:/app
-      - vendor_data:/app/vendor
       - ./storage/app:/app/storage/app
-      - ./storage/logs:/app/storage/logs
+      - app_logs:/app/storage/logs
     depends_on:
       mysql:
         condition: service_healthy
@@ -66,6 +62,8 @@ services:
   mysql:
     image: mariadb:10.11
     restart: unless-stopped
+    command: ["--innodb-buffer-pool-size=256M", "--max-connections=30", "--table-open-cache=200"]
+    env_file: .env
     environment:
       TZ: Europe/Budapest
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD is required}
@@ -75,10 +73,10 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 30s
     networks:
       - epa_network
@@ -86,7 +84,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     healthcheck:
@@ -98,9 +96,11 @@ services:
       - epa_network
 
 volumes:
+  app_logs:
+  caddy_data:
+  caddy_config:
   mysql_data:
   redis_data:
-  vendor_data:
 
 networks:
   epa_network:

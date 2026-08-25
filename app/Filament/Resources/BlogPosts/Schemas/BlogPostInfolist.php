@@ -20,6 +20,7 @@ class BlogPostInfolist
                     ->placeholder('-')
                     ->columnSpanFull(),
                 ImageEntry::make('cover_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('published_at')
                     ->dateTime()
@@ -29,6 +30,7 @@ class BlogPostInfolist
                 TextEntry::make('meta_description')
                     ->placeholder('-'),
                 ImageEntry::make('og_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

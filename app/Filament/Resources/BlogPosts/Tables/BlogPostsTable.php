@@ -22,7 +22,8 @@ class BlogPostsTable
                     ->searchable(),
                 TextColumn::make('excerpt')
                     ->searchable(),
-                ImageColumn::make('cover_image'),
+                ImageColumn::make('cover_image')
+                    ->disk('public'),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),
@@ -30,7 +31,8 @@ class BlogPostsTable
                     ->searchable(),
                 TextColumn::make('meta_description')
                     ->searchable(),
-                ImageColumn::make('og_image'),
+                ImageColumn::make('og_image')
+                    ->disk('public'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

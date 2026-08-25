@@ -12,7 +12,7 @@
 <header x-data="{ mobileOpen: false }" class="sticky top-0 z-40 bg-cream/95 backdrop-blur border-b border-petrol-100">
     <div class="mx-auto max-w-7xl px-6 flex items-center justify-between h-20">
         <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3">
-            <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-11 w-auto">
+            <img src="{{ asset('images/logo-icon.webp') }}" alt="" class="h-11 w-auto" width="64" height="44">
             <span class="font-display text-2xl font-semibold text-petrol-900">Épület<span class="text-gold-500">audio</span></span>
         </a>
 

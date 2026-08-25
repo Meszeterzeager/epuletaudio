@@ -39,6 +39,7 @@ class ProjectsRelationManager extends RelationManager
                 FileUpload::make('og_image')
                     ->label('Borítókép')
                     ->image()
+                    ->disk('public')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1200, 630)),
                 Toggle::make('is_active')
                     ->label('Aktív (látható a weboldalon)')
@@ -53,6 +54,7 @@ class ProjectsRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('images.path')
                     ->label('Kép')
+                    ->disk('public')
                     ->limit(1),
                 TextColumn::make('title')
                     ->label('Cím')

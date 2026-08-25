@@ -27,6 +27,7 @@ class ImagesRelationManager extends RelationManager
                 FileUpload::make('path')
                     ->label('Kép')
                     ->image()
+                    ->disk('public')
                     ->directory('projects')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1920, 1080))
                     ->required(),
@@ -49,7 +50,8 @@ class ImagesRelationManager extends RelationManager
             ->defaultSort('order')
             ->columns([
                 ImageColumn::make('path')
-                    ->label('Kép'),
+                    ->label('Kép')
+                    ->disk('public'),
                 TextColumn::make('alt')
                     ->label('Alt szöveg'),
                 TextColumn::make('order')

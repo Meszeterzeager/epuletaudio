@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SupplierProduct extends Model
 {
@@ -37,5 +38,15 @@ class SupplierProduct extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(SupplierProductFile::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(SupplierProductImage::class)->orderBy('order');
     }
 }

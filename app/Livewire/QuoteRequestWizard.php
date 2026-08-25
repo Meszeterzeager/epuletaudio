@@ -8,6 +8,7 @@ use App\Models\QuoteRequest;
 use App\Models\Setting;
 use App\Services\ImageOptimizer;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -136,6 +137,13 @@ class QuoteRequestWizard extends Component
 
     public bool $submitted = false;
 
+    /**
+     * Honeypot mező — valódi látogatók nem látják (CSS-sel elrejtve), csak a
+     * formákat automatikusan kitöltő botok. Ha nem üres, spam-gyanús
+     * beküldésnek tekintjük.
+     */
+    public string $website = '';
+
     protected function rulesForStep(int $step): array
     {
         return match ($step) {
@@ -162,7 +170,7 @@ class QuoteRequestWizard extends Component
                 'source_equipment.*' => [Rule::in(array_keys(self::SOURCE_EQUIPMENT))],
                 'room_count' => ['nullable', 'integer', 'min:0'],
                 'source_count' => ['nullable', 'integer', 'min:0'],
-                'area_sqm' => ['nullable', 'numeric', 'min:0'],
+                'area_sqm' => ['required', 'numeric', 'min:0'],
                 'existing_system' => ['boolean'],
                 'existing_system_notes' => ['nullable', 'string', 'max:2000'],
             ],
@@ -211,7 +219,26 @@ class QuoteRequestWizard extends Component
 
     public function submit(): void
     {
+        // Ha a honeypot mező ki van töltve, szinte biztosan bot küldte —
+        // a felhasználó felé (a botnak) sikeresnek mutatjuk, de valójában
+        // semmit nem mentünk el és nem küldünk emailt.
+        if ($this->website !== '') {
+            $this->submitted = true;
+
+            return;
+        }
+
+        $rateLimitKey = 'quote-request-submit:'.request()->ip();
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, maxAttempts: 3)) {
+            $this->addError('gdpr_consent', 'Túl sok ajánlatkérést küldtél rövid idő alatt. Kérjük, próbáld újra később, vagy írj nekünk emailben.');
+
+            return;
+        }
+
         $this->validate($this->rulesForStep(6));
+
+        RateLimiter::hit($rateLimitKey, decaySeconds: 900);
 
         $quoteRequest = QuoteRequest::create([
             'name' => $this->name,
@@ -258,12 +285,12 @@ class QuoteRequestWizard extends Component
             $quoteRequest->files()->create(['type' => 'video', 'url' => $this->video_url]);
         }
 
-        Mail::to($this->email)->send(new QuoteRequestConfirmation($quoteRequest));
+        Mail::to($this->email)->queue(new QuoteRequestConfirmation($quoteRequest));
 
         $notificationEmails = Setting::getEmailList('notification_email');
 
         if (! empty($notificationEmails)) {
-            Mail::to($notificationEmails)->send(new QuoteRequestReceivedAdmin($quoteRequest));
+            Mail::to($notificationEmails)->queue(new QuoteRequestReceivedAdmin($quoteRequest));
         }
 
         $this->submitted = true;

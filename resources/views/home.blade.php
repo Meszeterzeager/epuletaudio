@@ -1,6 +1,6 @@
 <x-layouts.app
-    :title="'Épülethangosítás, konferencia-, tourguide- és vészhangosítás'"
-    meta-description="Épülethangosítás, konferenciarendszerek, tourguide-rendszerek, mobil hangosítás, EVAC vészhangosítás és ablaküveg-átbeszélő rendszerek tervezéstől a kivitelezésig és átadásig — templomoknak, irodáknak, üzleteknek, intézményeknek és iparnak."
+    :title="'Épülethangosítás, konferencia- és tourguide-rendszerek'"
+    meta-description="Épülethangosítás, konferenciarendszerek, tourguide-rendszerek, mobil hangosítás és ablakátbeszélő rendszerek tervezéstől a kivitelezésig és átadásig — templomoknak, irodáknak, üzleteknek, intézményeknek és iparnak."
 >
     @include('home.sections.hero')
     @include('home.sections.services-strip', ['services' => $services])

@@ -10,7 +10,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -32,21 +31,28 @@ class ProductsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 ImageColumn::make('image')
-                    ->label('Kép'),
+                    ->label('')
+                    ->disk('public')
+                    ->size(48)
+                    ->square(),
                 TextColumn::make('name')
                     ->label('Név')
                     ->searchable(),
+                TextColumn::make('sku')
+                    ->label('SKU')
+                    ->searchable(),
+                TextColumn::make('category')
+                    ->label('Kategória')
+                    ->searchable(),
+                TextColumn::make('selling_price')
+                    ->label('Eladási ár (nettó)')
+                    ->money(fn ($record) => $record->currency)
+                    ->sortable(),
                 TextColumn::make('purchase_price')
                     ->label('Beszerzési ár')
-                    ->money()
+                    ->money(fn ($record) => $record->currency)
+                    ->placeholder('-')
                     ->sortable(),
-                TextColumn::make('selling_price')
-                    ->label('Eladási ár')
-                    ->money()
-                    ->sortable(),
-                IconColumn::make('is_active')
-                    ->label('Aktív')
-                    ->boolean(),
             ])
             ->headerActions([
                 CreateAction::make(),

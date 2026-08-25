@@ -20,7 +20,8 @@ class SolutionsTable
                     ->searchable(),
                 TextColumn::make('industry_name')
                     ->searchable(),
-                ImageColumn::make('hero_image'),
+                ImageColumn::make('hero_image')
+                    ->disk('public'),
                 TextColumn::make('order')
                     ->numeric()
                     ->sortable(),
@@ -28,7 +29,8 @@ class SolutionsTable
                     ->searchable(),
                 TextColumn::make('meta_description')
                     ->searchable(),
-                ImageColumn::make('og_image'),
+                ImageColumn::make('og_image')
+                    ->disk('public'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

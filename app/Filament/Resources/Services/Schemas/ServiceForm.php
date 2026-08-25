@@ -27,6 +27,7 @@ class ServiceForm
                     ->default(null),
                 FileUpload::make('hero_image')
                     ->image()
+                    ->disk('public')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1920, 1080)),
                 TextInput::make('order')
                     ->required()
@@ -38,6 +39,7 @@ class ServiceForm
                     ->default(null),
                 FileUpload::make('og_image')
                     ->image()
+                    ->disk('public')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1200, 630)),
             ]);
     }

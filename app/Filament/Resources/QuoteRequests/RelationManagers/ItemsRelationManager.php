@@ -9,6 +9,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -17,8 +18,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class ItemsRelationManager extends RelationManager
 {
@@ -61,6 +65,23 @@ class ItemsRelationManager extends RelationManager
                         }
                     })
                     ->live(),
+
+                Placeholder::make('supplier_product_preview')
+                    ->label('')
+                    ->visible(fn (Get $get): bool => $get('item_type') === 'product' && filled($get('supplier_product_id')))
+                    ->content(function (Get $get): ?HtmlString {
+                        $product = SupplierProduct::find($get('supplier_product_id'));
+
+                        if (! $product?->image) {
+                            return null;
+                        }
+
+                        $url = e(Storage::disk('public')->url($product->image));
+
+                        return new HtmlString(
+                            "<img src=\"{$url}\" style=\"width:80px;height:80px;object-fit:cover;border-radius:8px\" />"
+                        );
+                    }),
 
                 Select::make('billable_service_id')
                     ->label('Szolgáltatás a katalógusból')
@@ -111,6 +132,12 @@ class ItemsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->defaultSort('order')
             ->columns([
+                ImageColumn::make('supplierProduct.image')
+                    ->label('')
+                    ->disk('public')
+                    ->size(40)
+                    ->square()
+                    ->placeholder(''),
                 TextColumn::make('item_type')
                     ->label('Típus')
                     ->badge()

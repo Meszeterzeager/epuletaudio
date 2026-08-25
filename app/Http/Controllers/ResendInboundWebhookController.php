@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Services\Mailbox as MailboxService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -16,12 +17,10 @@ use Illuminate\Support\Str;
 
 /**
  * Fogadja a Resend Inbound Email webhookját (Svix-aláírással hitelesített
- * POST kérés) — bejövő levelet ment a Postafiók "Beérkező" mappájába.
- *
- * FONTOS: a pontos payload-mezőneveket (data.from, data.attachments, stb.)
- * a Resend dashboard élő teszt-levelével kell ellenőrizni, mert ez nem
- * tesztelhető élő Resend fiók nélkül — a lenti parse defenzíven, sok
- * fallbackkal próbálja kiolvasni a mezőket.
+ * POST kérés). A webhook payload csak metaadatot (email_id, feladó, tárgy,
+ * melléklet-lista) tartalmaz — a levéltörzset és a mellékletek tartalmát a
+ * Resend "Receiving" API-jából kell lekérni az email_id alapján:
+ * https://resend.com/docs/api-reference/emails/retrieve-received-email
  */
 class ResendInboundWebhookController extends Controller
 {
@@ -33,20 +32,35 @@ class ResendInboundWebhookController extends Controller
             return response('Invalid signature', 401);
         }
 
-        $payload = $request->json('data', []) ?: $request->all();
+        if ($request->input('type') !== 'email.received') {
+            return response('Ignored', 200);
+        }
 
-        $fromRaw = $payload['from'] ?? $payload['from_email'] ?? '';
-        [$fromName, $fromEmail] = $this->parseFromHeader((string) $fromRaw);
+        $emailId = $request->input('data.email_id');
+
+        if (blank($emailId)) {
+            Log::warning('Resend inbound webhook: hiányzó email_id.', ['payload' => $request->all()]);
+
+            return response('Missing email_id', 422);
+        }
+
+        $email = $this->fetchReceivedEmail((string) $emailId);
+
+        if ($email === null) {
+            return response('Failed to fetch email', 502);
+        }
+
+        [$fromName, $fromEmail] = $this->parseFromHeader((string) ($email['from'] ?? ''));
 
         if (blank($fromEmail)) {
-            Log::warning('Resend inbound webhook: hiányzó feladó email.', ['payload' => $payload]);
+            Log::warning('Resend inbound webhook: hiányzó feladó email.', ['email_id' => $emailId]);
 
             return response('Missing sender', 422);
         }
 
-        $headers = $payload['headers'] ?? [];
-        $messageIdHeader = $headers['Message-Id'] ?? $headers['Message-ID'] ?? $payload['message_id'] ?? null;
-        $inReplyTo = $headers['In-Reply-To'] ?? $payload['in_reply_to'] ?? null;
+        $headers = $email['headers'] ?? [];
+        $messageIdHeader = $email['message_id'] ?? $headers['message-id'] ?? null;
+        $inReplyTo = $headers['in-reply-to'] ?? null;
 
         $threadId = $inReplyTo
             ? (EmailMessage::where('message_id_header', $inReplyTo)->value('thread_id') ?? Str::uuid()->toString())
@@ -57,19 +71,20 @@ class ResendInboundWebhookController extends Controller
             'thread_id' => $threadId,
             'direction' => 'inbound',
             'status' => 'unread',
+            'resend_message_id' => $emailId,
             'message_id_header' => $messageIdHeader,
             'in_reply_to' => $inReplyTo,
             'from_name' => $fromName,
             'from_email' => $fromEmail,
-            'to' => (array) ($payload['to'] ?? []),
-            'cc' => (array) ($payload['cc'] ?? []),
-            'subject' => $payload['subject'] ?? '(nincs tárgy)',
-            'body_html' => $payload['html'] ?? null,
-            'body_text' => $payload['text'] ?? null,
+            'to' => (array) ($email['to'] ?? []),
+            'cc' => (array) ($email['cc'] ?? []),
+            'subject' => $email['subject'] ?? '(nincs tárgy)',
+            'body_html' => $this->resolveHtmlBody($email),
+            'body_text' => $email['text'] ?? null,
             'received_at' => now(),
         ]);
 
-        $this->storeAttachments($message, (array) ($payload['attachments'] ?? []));
+        $this->storeAttachments($message, $emailId, (array) ($email['attachments'] ?? []));
 
         $this->notifyAdmin($message);
 
@@ -79,41 +94,98 @@ class ResendInboundWebhookController extends Controller
     }
 
     /**
-     * A Resend inbound payload esetleges mellékleteinek elmentése — a pontos
-     * mezőneveket (filename/content/content_type) élő teszt-levéllel kell
-     * ellenőrizni, ezért ez is defenzíven, hibát nem dobva próbálkozik.
+     * A teljes beérkező levél lekérése a Resend Receiving API-jából — a
+     * webhook payload maga csak metaadatot tartalmaz.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function fetchReceivedEmail(string $emailId): ?array
+    {
+        $response = Http::withToken((string) config('services.resend.key'))
+            ->get("https://api.resend.com/emails/receiving/{$emailId}");
+
+        if ($response->failed()) {
+            Log::warning('Resend inbound webhook: a levél lekérése sikertelen.', [
+                'email_id' => $emailId,
+                'status' => $response->status(),
+            ]);
+
+            return null;
+        }
+
+        return $response->json();
+    }
+
+    /**
+     * Ha a Resend a HTML törzset data: URI-ként adja vissza (html_format:
+     * data_uri, nagyobb leveleknél), itt dekódoljuk vissza sima HTML-lé.
+     *
+     * @param  array<string, mixed>  $email
+     */
+    private function resolveHtmlBody(array $email): ?string
+    {
+        $html = $email['html'] ?? null;
+
+        if (blank($html)) {
+            return null;
+        }
+
+        if (($email['html_format'] ?? null) === 'data_uri' && str_starts_with((string) $html, 'data:')) {
+            $decoded = base64_decode((string) Str::after((string) $html, 'base64,'), true);
+
+            if ($decoded !== false) {
+                return $decoded;
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * A mellékletek letöltése a Resend Attachments API-ján keresztül: minden
+     * melléklethez külön hívással kérünk egy ideiglenes download_url-t, majd
+     * onnan töltjük le a tartalmat.
      *
      * @param  array<int, mixed>  $attachments
      */
-    private function storeAttachments(EmailMessage $message, array $attachments): void
+    private function storeAttachments(EmailMessage $message, string $emailId, array $attachments): void
     {
         foreach ($attachments as $attachment) {
-            if (! is_array($attachment)) {
+            if (! is_array($attachment) || blank($attachment['id'] ?? null)) {
                 continue;
             }
 
-            $filename = $attachment['filename'] ?? $attachment['name'] ?? null;
-            $content = $attachment['content'] ?? $attachment['data'] ?? null;
-
-            if (blank($filename) || blank($content)) {
-                continue;
-            }
+            $filename = basename((string) ($attachment['filename'] ?? 'attachment'));
 
             try {
-                $decoded = base64_decode((string) $content, true);
+                $meta = Http::withToken((string) config('services.resend.key'))
+                    ->get("https://api.resend.com/emails/receiving/{$emailId}/attachments/{$attachment['id']}");
 
-                if ($decoded === false) {
+                $downloadUrl = $meta->json('download_url');
+
+                if ($meta->failed() || blank($downloadUrl)) {
+                    Log::warning('Resend inbound webhook: melléklet metaadat lekérése sikertelen.', [
+                        'email_id' => $emailId,
+                        'attachment_id' => $attachment['id'],
+                    ]);
+
+                    continue;
+                }
+
+                $download = Http::get($downloadUrl);
+
+                if ($download->failed()) {
                     continue;
                 }
 
                 $path = "email-attachments/{$message->id}/".Str::random(8).'-'.$filename;
-                Storage::disk('local')->put($path, $decoded);
+                Storage::disk('local')->put($path, $download->body());
 
                 $message->attachments()->create([
                     'filename' => $filename,
                     'path' => $path,
-                    'mime_type' => $attachment['content_type'] ?? $attachment['type'] ?? null,
-                    'size' => strlen($decoded),
+                    'mime_type' => $attachment['content_type'] ?? null,
+                    'size' => $attachment['size'] ?? strlen($download->body()),
                 ]);
             } catch (\Throwable $e) {
                 Log::warning('Resend inbound webhook: melléklet mentése sikertelen.', [
@@ -129,9 +201,17 @@ class ResendInboundWebhookController extends Controller
         $secret = config('services.resend.webhook_secret');
 
         if (blank($secret)) {
-            // Nincs beállított webhook secret — fejlesztői módban átengedjük,
-            // de élesben mindig legyen RESEND_WEBHOOK_SECRET beállítva.
-            return ! app()->isProduction();
+            // Nincs beállított webhook secret — csak kifejezetten helyi
+            // fejlesztői környezetben (APP_ENV=local) engedjük át aláírás
+            // nélkül; minden más környezetben (staging, elgépelt env, stb.)
+            // zárva bukik el, hogy hiányzó konfiguráció ne nyisson kaput.
+            if (app()->environment('local')) {
+                return true;
+            }
+
+            Log::warning('Resend inbound webhook: nincs beállítva RESEND_WEBHOOK_SECRET, a kérés elutasítva.');
+
+            return false;
         }
 
         $svixId = $request->header('svix-id');

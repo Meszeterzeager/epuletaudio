@@ -19,7 +19,7 @@
                     Megrendelésedet rögzítettük, kollégáink megkezdik a beszerzést, és hamarosan felvesszük veled a kapcsolatot a részletekkel és a további lépésekkel kapcsolatban.
                 @endif
             </p>
-            <a href="{{ route('home') }}" wire:navigate class="mt-8 inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-petrol-950 hover:bg-gold-400 transition-colors">
+            <a href="{{ route('home') }}" wire:navigate class="mt-8 inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-black hover:bg-gold-400 transition-colors">
                 Vissza a főoldalra
             </a>
         </div>

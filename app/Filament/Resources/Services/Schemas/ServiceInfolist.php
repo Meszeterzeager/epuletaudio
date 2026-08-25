@@ -22,6 +22,7 @@ class ServiceInfolist
                 TextEntry::make('icon')
                     ->placeholder('-'),
                 ImageEntry::make('hero_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('order')
                     ->numeric(),
@@ -30,6 +31,7 @@ class ServiceInfolist
                 TextEntry::make('meta_description')
                     ->placeholder('-'),
                 ImageEntry::make('og_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

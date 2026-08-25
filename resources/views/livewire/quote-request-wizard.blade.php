@@ -19,6 +19,18 @@
             </a>
         </div>
     @else
+        {{-- Honeypot — valódi látogatók nem látják és nem töltik ki; ha egy bot
+             mégis kitölti, a submit() csendben, láthatóan sikeresen lezárja a
+             folyamatot anélkül, hogy bármit elmentene vagy emailt küldene. --}}
+        <input
+            type="text"
+            wire:model="website"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+            style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0"
+        />
+
         <div class="mb-10">
             {{-- Mobil: kompakt "X/6" jelző + haladási sáv, hogy ne kelljen oldalra görgetni --}}
             <div class="sm:hidden">
@@ -193,8 +205,9 @@
                             <input type="number" min="0" wire:model="source_count" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium text-ink mb-1">Becsült alapterület (m²)</label>
+                            <label class="block text-sm font-medium text-ink mb-1">Becsült alapterület (m²) *</label>
                             <input type="number" min="0" step="0.1" wire:model="area_sqm" class="w-full sm:w-1/2 rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                            @error('area_sqm') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
@@ -324,7 +337,7 @@
                     type="submit"
                     wire:loading.attr="disabled"
                     wire:target="submit,nextStep"
-                    class="inline-flex items-center rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-petrol-950 hover:bg-gold-400 transition-colors disabled:opacity-60"
+                    class="inline-flex items-center rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-black hover:bg-gold-400 transition-colors disabled:opacity-60"
                 >
                     <span wire:loading.remove wire:target="submit,nextStep">
                         {{ $step === 6 ? 'Ajánlatkérés elküldése' : 'Következő' }}

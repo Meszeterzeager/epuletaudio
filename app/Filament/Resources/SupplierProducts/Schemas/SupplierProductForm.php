@@ -5,10 +5,10 @@ namespace App\Filament\Resources\SupplierProducts\Schemas;
 use App\Services\ImageOptimizer;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class SupplierProductForm
@@ -29,16 +29,34 @@ class SupplierProductForm
                     ->default(null)
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
                 TextInput::make('category')
-                    ->default(null)
-                    ->disabled(fn (string $operation): bool => $operation === 'edit'),
+                    ->default(null),
                 Textarea::make('description')
                     ->default(null)
                     ->columnSpanFull()
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
                 FileUpload::make('image')
+                    ->label('Fő kép')
                     ->image()
-                    ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1200, 1200))
-                    ->disabled(fn (string $operation): bool => $operation === 'edit'),
+                    ->disk('public')
+                    ->imagePreviewHeight('200')
+                    ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1920, 1920)),
+                Repeater::make('images')
+                    ->relationship()
+                    ->label('Galéria (további képek)')
+                    ->columnSpanFull()
+                    ->reorderableWithButtons()
+                    ->orderColumn('order')
+                    ->grid(3)
+                    ->simple(
+                        FileUpload::make('path')
+                            ->image()
+                            ->disk('public')
+                            ->directory('supplier-products')
+                            ->imagePreviewHeight('150')
+                            ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1920, 1920))
+                            ->required(),
+                    )
+                    ->addActionLabel('Kép hozzáadása'),
                 TextInput::make('purchase_price')
                     ->label('Beszerzési ár')
                     ->numeric()
@@ -55,11 +73,6 @@ class SupplierProductForm
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
                 TextInput::make('unit')
                     ->default(null)
-                    ->disabled(fn (string $operation): bool => $operation === 'edit'),
-                Toggle::make('is_active')
-                    ->required(),
-                Toggle::make('is_public_showcase')
-                    ->required()
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
                 DateTimePicker::make('last_price_updated_at'),
             ]);

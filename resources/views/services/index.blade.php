@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Szolgáltatások'" meta-description="Épülethangosítás, konferenciarendszerek, tourguide-rendszerek, mobil hangosítás, EVAC és ablaküveg-átbeszélő megoldások — nézd meg szolgáltatásainkat.">
+<x-layouts.app :title="'Szolgáltatások'" meta-description="Épülethangosítás, konferenciarendszerek, tourguide-rendszerek, mobil hangosítás és ablakátbeszélő megoldások — nézd meg szolgáltatásainkat.">
     @php
         $crumbs = [
             ['name' => 'Főoldal', 'url' => route('home')],

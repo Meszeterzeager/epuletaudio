@@ -9,7 +9,7 @@
                 Templomtól az étteremig, irodától a rendezvényteremig: épülethangosítás, konferencia-, tourguide- és mobil hangrendszerek — tervezéstől az átadásig.
             </p>
             <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a href="{{ route('quote.create') }}" data-magnetic="0.35" wire:navigate class="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-petrol-950 hover:bg-gold-400 transition-colors">
+                <a href="{{ route('quote.create') }}" data-magnetic="0.35" wire:navigate class="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-black hover:bg-gold-400 transition-colors">
                     Ajánlatot kérek
                 </a>
                 @if (\App\Models\Setting::getBool('references_enabled'))

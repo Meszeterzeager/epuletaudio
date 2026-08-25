@@ -29,13 +29,15 @@
                 <li><strong>Adószám:</strong> {{ config('company.tax_number') }}</li>
                 <li><strong>Nyilvántartási szám:</strong> {{ config('company.registration_number') }}</li>
                 <li><strong>E-mail cím:</strong> <a href="mailto:{{ config('company.email') }}">{{ config('company.email') }}</a></li>
-                <li><strong>Telefonszám:</strong> {{ config('company.phone') }}</li>
+                @if (config('company.phone'))
+                    <li><strong>Telefonszám:</strong> {{ config('company.phone') }}</li>
+                @endif
                 <li><strong>Tárhelyszolgáltató adatai:</strong> {{ config('company.hosting_name') }} ({{ config('company.hosting_address') }}, {{ config('company.hosting_email') }})</li>
             </ul>
 
             <h2>2. A weboldal célja és jogi jellege</h2>
             <ol>
-                <li>A jelen weboldal (<code>epuletaudio.hu</code>) az Üzemeltető által nyújtott épülethangosítási, akusztikai, vészhangosítási és konferenciatechnikai szolgáltatások, valamint kapcsolódó termékek bemutatására szolgál.</li>
+                <li>A jelen weboldal (<code>epuletaudio.hu</code>) az Üzemeltető által nyújtott épülethangosítási, akusztikai és konferenciatechnikai szolgáltatások, valamint kapcsolódó termékek bemutatására szolgál.</li>
                 <li>A weboldalon található információk, leírások, műszaki paraméterek és esetleges indikatív árak kizárólag tájékoztató jellegűek, nem minősülnek a Polgári Törvénykönyv (Ptk.) szerinti közvetlen ajánlattételnek.</li>
                 <li>A weboldalon keresztül közvetlen online adásvétel, kosárelhelyezés vagy azonnali fizetés nem történik.</li>
             </ol>

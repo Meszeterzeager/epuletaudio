@@ -10,7 +10,7 @@ Megkaptuk a beadott adataidat, és hamarosan felvesszük veled a kapcsolatot.
 - Tervezett kivitelezési időszak: {{ $quoteRequest->preferred_timeframe }}
 @endif
 
-Ha bármi kérdésed van, válaszolj erre az emailre, vagy hívj minket telefonon.
+Ha bármi kérdésed van, válaszolj erre az emailre.
 
 Üdvözlettel,<br>
 Épületaudio csapata

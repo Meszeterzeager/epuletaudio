@@ -30,6 +30,7 @@ class ProjectInfolist
                 TextEntry::make('meta_description')
                     ->placeholder('-'),
                 ImageEntry::make('og_image')
+                    ->disk('public')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

@@ -23,7 +23,7 @@ class ImageOptimizer
         string $disk = 'public',
         int $maxWidth = 1920,
         int $maxHeight = 1920,
-        int $quality = 82,
+        int $quality = 72,
     ): string {
         $manager = new ImageManager(new Driver());
         $image = $manager->decodePath($file->getRealPath());
@@ -42,7 +42,7 @@ class ImageOptimizer
      * A `saveUploadedFileUsing()` callback for Filament FileUpload fields that
      * resizes and converts images to WebP before storing them.
      */
-    public static function filamentSaveUsing(int $maxWidth = 1920, int $maxHeight = 1920, int $quality = 82): Closure
+    public static function filamentSaveUsing(int $maxWidth = 1920, int $maxHeight = 1920, int $quality = 72): Closure
     {
         return function (BaseFileUpload $component, UploadedFile $file) use ($maxWidth, $maxHeight, $quality): string {
             return self::store(

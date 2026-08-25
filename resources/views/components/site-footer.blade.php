@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-7xl px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
         <div>
             <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-10 w-auto">
+                <img src="{{ asset('images/logo-icon.webp') }}" alt="" class="h-10 w-auto" width="58" height="40">
                 <span class="font-display text-2xl font-semibold text-cream">Épület<span class="text-gold-400">audio</span></span>
             </div>
             <p class="mt-4 text-sm text-cream/60 max-w-xs">
@@ -39,13 +39,13 @@
                     <li><a href="tel:{{ config('company.phone') }}" class="hover:text-cream">{{ config('company.phone') }}</a></li>
                 @endif
             </ul>
-            <a href="{{ route('quote.create') }}" wire:navigate class="mt-4 inline-flex items-center rounded-full bg-gold-500 px-5 py-2.5 text-sm font-semibold text-petrol-950 hover:bg-gold-400 transition-colors">
+            <a href="{{ route('quote.create') }}" wire:navigate class="mt-4 inline-flex items-center rounded-full bg-gold-500 px-5 py-2.5 text-sm font-semibold text-black hover:bg-gold-400 transition-colors">
                 Ajánlatot kérek
             </a>
         </div>
     </div>
 
-    <div class="border-t border-cream/10 py-6 px-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-center text-xs text-cream/50">
+    <div class="border-t border-cream/10 py-6 px-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-center text-xs text-cream/70">
         <span>&copy; {{ now()->year }} Épületaudio. Minden jog fenntartva.</span>
         <span class="flex items-center gap-4">
             <a href="{{ route('legal.terms') }}" wire:navigate class="hover:text-cream">ÁSZF</a>

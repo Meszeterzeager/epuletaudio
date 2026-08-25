@@ -40,8 +40,8 @@
                 <input type="search" wire:model.live.debounce.400ms="search" placeholder="Keresés levelekben és névjegyekben…" class="w-full min-w-0 flex-1" style="border:none;background:none;font-size:14px;color:#201e1d" />
             </div>
             <div class="flex-1"></div>
-            <span class="hidden shrink-0 sm:inline" style="font-size:13px;color:rgba(32,30,29,0.6)">Ügyfélszolgálat</span>
-            <span class="flex shrink-0 items-center justify-center rounded-full" style="width:34px;height:34px;background:#e9f8ff;color:#004961;font-size:13px;font-weight:600">ÜF</span>
+            <a href="mailto:{{ config('company.email') }}" class="hidden shrink-0 sm:inline" style="font-size:13px;color:rgba(32,30,29,0.6)">{{ config('company.email') }}</a>
+            <span class="flex shrink-0 items-center justify-center rounded-full" style="width:34px;height:34px;background:#e9f8ff;color:#004961;font-size:13px;font-weight:600">EA</span>
         </div>
 
         {{-- Mappasáv + tartalom sor --}}

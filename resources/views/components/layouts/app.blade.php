@@ -32,7 +32,12 @@
     <meta name="twitter:image" content="{{ $ogImageUrl }}">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600|fraunces:500,600,700" rel="stylesheet" />
+    @php
+        $fontCssUrl = 'https://fonts.bunny.net/css?family=instrument-sans:400,500,600|fraunces:500,600,700&display=swap';
+    @endphp
+    <link rel="preload" as="style" href="{{ $fontCssUrl }}">
+    <link href="{{ $fontCssUrl }}" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="{{ $fontCssUrl }}" rel="stylesheet"></noscript>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -42,7 +47,7 @@
 </head>
 <body class="bg-cream text-ink font-sans antialiased">
     <div id="page-transition-overlay" class="fixed inset-0 z-[10000] flex items-center justify-center bg-petrol-950 motion-reduce:hidden">
-        <img src="{{ asset('images/logo-icon.png') }}" alt="" id="page-transition-mark" class="h-14 w-auto opacity-0 scale-90">
+        <img src="{{ asset('images/logo-icon.webp') }}" alt="" id="page-transition-mark" class="h-14 w-auto opacity-0 scale-90" width="82" height="56">
     </div>
 
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-petrol-900 focus:text-cream focus:px-4 focus:py-2 focus:rounded">

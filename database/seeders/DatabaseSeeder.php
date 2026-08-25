@@ -20,11 +20,11 @@ class DatabaseSeeder extends Seeder
             [
                 'slug' => 'epulethangositas',
                 'title' => 'Épülethangosítás',
-                'short_description' => 'Egyenletes hangzás minden helyiségben, zónánként vezérelve — 100V-os technológiával nagy kiterjedésű épületekhez.',
+                'short_description' => 'Egyenletes hangzás minden helyiségben, igény szerint akár zónánként külön vezérelve — 100V-os technológiával nagy kiterjedésű épületekhez.',
                 'meta_title' => 'Épülethangosítás — 100V-os hangrendszer tervezés és telepítés',
-                'meta_description' => 'Egyenletes, zónánként vezérelt hangzás templomoknak, irodáknak és intézményeknek — helyszíni felméréstől a 100V-os hangrendszer telepítéséig és átadásáig.',
+                'meta_description' => 'Egyenletes hangzás templomoknak, irodáknak és intézményeknek, igény szerint zónánként vezérelve — alapos igényfelméréstől a 100V-os hangrendszer telepítéséig és átadásáig.',
                 'order' => 1,
-                'description' => "Egy épület hangja ugyanolyan része az identitásának, mint a homlokzata vagy a belsőépítészete. Az épülethangosítás nálunk nem egyenlő azzal, hogy \"felszerelünk néhány hangfalat\" — minden projekt a helyszín akusztikai felmérésével kezdődik, mert egy templom, egy irodaház és egy áruház gyökeresen más megközelítést kíván.\n\nA rendszereket úgy tervezzük meg, hogy zónánként, egymástól függetlenül vezérelhetők legyenek: a recepción szóló háttérzene nem zavarja a szomszédos tárgyalót, a bemondás pedig pontosan azt a szárnyat éri el, ahol szükség van rá. Nagy kiterjedésű épületeknél 100V-os technológiát alkalmazunk, ami lehetővé teszi, hogy akár több tucat hangfalat kössünk egyetlen erősítőre, hosszú kábelezéssel, jelentős veszteség nélkül.\n\nAz eredmény: egy rendszer, amit könnyű kezelni, egyszerű bővíteni, és — a legfontosabb — amit a bent dolgozók és a betérő vendégek egyszerűen csak jól hallanak, anélkül hogy tudatosulna bennük, miért.",
+                'description' => "Egy épület hangja ugyanolyan része az identitásának, mint a homlokzata vagy a belsőépítészete. Az épülethangosítás nálunk nem egyenlő azzal, hogy \"felszerelünk néhány hangfalat\" — minden projekt alapos igényfelméréssel kezdődik, amit szükség esetén személyes helyszíni felméréssel vagy konzultációval is kiegészítünk, mert egy templom, egy irodaház és egy áruház gyökeresen más megközelítést kíván.\n\nA rendszereket úgy tervezzük meg, hogy igény szerint akár több zóna is egymástól függetlenül vezérelhető legyen — nem kell mindenhol külön zónákra bontani a rendszert, csak ott, ahol ennek valódi értelme van: a recepción szóló háttérzene így nem zavarja a szomszédos tárgyalót, a bemondás pedig pontosan azt a szárnyat éri el, ahol szükség van rá. Nagy kiterjedésű épületeknél 100V-os technológiát alkalmazunk, ami lehetővé teszi, hogy akár több tucat hangfalat kössünk egyetlen erősítőre, hosszú kábelezéssel, jelentős veszteség nélkül.\n\nAz eredmény: egy rendszer, amit könnyű kezelni, egyszerű bővíteni, és — a legfontosabb — amit a bent dolgozók és a betérő vendégek egyszerűen csak jól hallanak, anélkül hogy tudatosulna bennük, miért.",
             ],
             [
                 'slug' => 'konferenciarendszerek',
@@ -47,29 +47,20 @@ class DatabaseSeeder extends Seeder
             [
                 'slug' => 'mobil-hangositas',
                 'title' => 'Mobil hangosítás',
-                'short_description' => 'Rendezvényekre, alkalmi eseményekre telepíthető hangtechnika.',
-                'meta_title' => 'Mobil hangosítás — rendezvényekre, alkalmi eseményekre',
-                'meta_description' => 'Kompakt, professzionális hangfalak és erősítők esküvőkre, céges rendezvényekre és alkalmi programokra — helyszíni beállítással és igény esetén kezeléssel.',
+                'short_description' => 'Kompakt, magától is összeszerelhető hangtechnika iskoláknak, céges és médiarendezvényekre, különleges alkalmakra.',
+                'meta_title' => 'Mobil hangosítás — iskoláknak, rendezvényekre, alkalmi eseményekre',
+                'meta_description' => 'Kompakt, egyszerűen összeszerelhető hangfal- és erősítő-szett iskoláknak, céges és médiarendezvényeknek — telepítés nélkül, pár perc alatt, szakértelem nélkül is használható.',
                 'order' => 4,
-                'description' => "Nem minden hangosítási igény állandó. Egy céges rendezvény, egy szabadtéri esküvő, egy alkalmi konferencia vagy egy piactéri program mind olyan helyzet, ahol a hangtechnikának egy napra — vagy néhány órára — kell tökéletesen működnie, aztán ugyanolyan gyorsan el is kell tűnnie.\n\nMobil hangosítási megoldásainkat pontosan ehhez terveztük: kompakt, professzionális hangfalak és erősítők, amiket gyorsan felállítunk, belőnk a helyszínhez, és — igény esetén — a rendezvény alatt kezelünk is, hogy neked ne kelljen a technikával foglalkoznod.\n\nAkár beszédhez, akár élő zenéhez, akár csak háttérhangzáshoz kell megbízható rendszer, nálunk a helyszíni felméréstől a lebontásig minden egy kézben van.",
-            ],
-            [
-                'slug' => 'veszhangositas-evakuacio',
-                'title' => 'Vészhangosítás & Evakuáció (EVAC)',
-                'short_description' => 'Szabványos vészhangosítási és evakuációs bemondórendszer (EVAC) irodaházakhoz, üzletközpontokhoz, iskolákhoz és ipari létesítményekhez, tűzjelzővel integrálva.',
-                'meta_title' => 'Vészhangosítás és evakuációs (EVAC) rendszer tervezése',
-                'meta_description' => 'Szabványos evakuációs bemondórendszer tűzjelzővel integrálva — irodaházaknak, üzletközpontoknak, iskoláknak és ipari létesítményeknek, akkumulátoros tartalék tápellátással.',
-                'order' => 5,
-                'description' => "Vészhelyzetben minden másodperc számít — egy jól megtervezett EVAC-rendszer nem csupán hangosít, hanem az épületben tartózkodókat zónánként, érthetően irányítja a legbiztonságosabb kiürítési útvonal felé, a tűzjelző központtal összekötve.\n\nA rendszert a vonatkozó szabványoknak megfelelően tervezzük és telepítjük, előre rögzített, automatikusan induló evakuációs üzenetekkel és élő bemondási lehetőséggel egyaránt. A hangfalakat úgy méretezzük, hogy a legzajosabb, legzsúfoltabb helyzetben is minden zónában érthető maradjon a bemondás — irodaházban, bevásárlóközpontban, iskolában vagy ipari csarnokban egyaránt.\n\nA rendszer akkumulátoros tartalék tápellátással is rendelkezik, így áramkimaradás esetén is garantáltan működik, amíg mindenki biztonságban el nem hagyja az épületet.",
+                'description' => "Nem minden hangosítási igény állandó, és nem mindenhez kell telepítés. Egy iskolai rendezvény, egy céges esemény, egy médiafelvétel vagy egy különleges alkalom mind olyan helyzet, ahol elég, ha a hangtechnika egyszerűen és gyorsan összeáll, tökéletesen működik, aztán ugyanolyan könnyen szét is szedhető.\n\nMobil hangosítási rendszereinket pontosan erre terveztük: kompakt, professzionális hangfalakból és erősítőből álló, egyszerűen összeállítható szettek, amiket egy hozzáértő szakember nélkül is, pár perc alatt össze lehet dugni és használatba lehet venni — nincs szükség telepítésre, csak csatlakoztatásra.\n\nAjánljuk iskoláknak, céges és médiarendezvényekre, valamint különleges alkalmakra, ahol fontos az egyszerű kezelhetőség: akár beszédhez, akár háttérzenéhez kell megbízható hangzás, a rendszert bárki magabiztosan tudja kezelni.",
             ],
             [
                 'slug' => 'ablak-atbeszelo-recepcio',
-                'title' => 'Ablaküveg-átbeszélő rendszer recepciókra',
-                'short_description' => 'Tiszta, érthető kommunikáció üveg- vagy plexi-válaszfal mögött — recepcióknak, portaszolgálatnak, gyógyszertári és ügyfélszolgálati pultoknak.',
-                'meta_title' => 'Ablaküveg-átbeszélő rendszer recepciókra és pultokra',
-                'meta_description' => 'Tiszta kommunikáció üveg- vagy plexi-válaszfal mögött recepcióknak, portaszolgálatnak és gyógyszertári pultoknak — gyors telepítés, pultátépítés nélkül.',
+                'title' => 'Ablakátbeszélő rendszer recepciókra',
+                'short_description' => 'Tiszta, érthető kommunikáció üveg- vagy plexi-válaszfal mögött — recepcióknak, pénztáraknak, portaszolgálatnak és biztonsági alkalmazásokra.',
+                'meta_title' => 'Ablakátbeszélő (intercom) rendszer recepciókra és pultokra',
+                'meta_description' => 'Tiszta kommunikáció üveg- vagy plexi-válaszfal mögött recepcióknak, pénztáraknak és portaszolgálatnak — gyors telepítés, pultátépítés nélkül, igény szerinti zónázással.',
                 'order' => 6,
-                'description' => "A biztonsági vagy higiéniai okból beépített üveg- és plexifal a recepciós pultoknál, portaszolgálatoknál és ügyfélszolgálatoknál egyre gyakoribb — csakhogy egy vastag üvegtábla mögött a normál beszéd elveszíti az érthetőségét, és mindkét fél kénytelen kiabálni vagy egy kis lyukhoz hajolni.\n\nAz ablaküveg-átbeszélő rendszer egy diszkrét, az üvegbe vagy a pult síkjába integrált mikrofon-hangszóró egységpárból áll, amely a hangot tisztán, torzítás nélkül, természetes hangerőn viszi át a válaszfalon — mindkét irányban, kéz felszabadítva, kontaktus nélkül. A vendég ugyanolyan könnyedén érti a recepcióst, mintha nem is lenne köztük üveg.\n\nAjánljuk recepcióknak, portaszolgálatoknak, gyógyszertári és okmányiroda-jellegű pultoknak, valamint minden olyan ügyfélszolgálati pontnak, ahol a védőfal nem mehet a kommunikáció rovására. A telepítés gyors, nem igényel a pult átépítését, és igény esetén a meglévő hangosítási rendszerünkkel is összekapcsolható.",
+                'description' => "A biztonsági vagy higiéniai okból beépített üveg- és plexifal a recepciós pultoknál, pénztáraknál, portaszolgálatoknál és ügyfélszolgálatoknál egyre gyakoribb — csakhogy egy vastag üvegtábla mögött a normál beszéd elveszíti az érthetőségét, és mindkét fél kénytelen kiabálni vagy egy kis lyukhoz hajolni.\n\nAz ablakátbeszélő rendszer (más néven intercom) egy diszkrét, az üvegbe vagy a pult síkjába integrált mikrofon-hangszóró egységpárból áll, amely a hangot tisztán, torzítás nélkül, természetes hangerőn viszi át a válaszfalon — mindkét irányban, kéz felszabadítva, kontaktus nélkül. A vendég ugyanolyan könnyedén érti a recepcióst vagy a pénztárost, mintha nem is lenne köztük üveg.\n\nAjánljuk recepcióknak, pénztáraknak, portaszolgálatoknak, gyógyszertári és okmányiroda-jellegű pultoknak, valamint minden olyan biztonsági és ügyfélszolgálati pontnak, ahol a védőfal nem mehet a kommunikáció rovására. A telepítés gyors, nem igényel a pult átépítését, és igény esetén a meglévő hangosítási rendszerünkkel is összekapcsolható.\n\nTöbb pult vagy ablak esetén a rendszert zónánként is meg tudjuk tervezni, de ez nem kötelező — ha csak egyetlen pultnál van szükség az átbeszélésre, egy zóna is tökéletesen elég, nem kell minden helyiséget külön zónaként kezelni.",
             ],
         ];
 
@@ -78,6 +69,7 @@ class DatabaseSeeder extends Seeder
         }
 
         Service::where('slug', '100v-technologia')->delete();
+        Service::where('slug', 'veszhangositas-evakuacio')->delete();
 
         // Csak akkor töltjük vissza a hero_image-et, ha jelenleg üres — így egy
         // esetleges friss adatbázis-reset után is marad kép, de nem írja felül
@@ -87,7 +79,6 @@ class DatabaseSeeder extends Seeder
             'konferenciarendszerek' => 'services/zkBHXD0CztGt6Ai50hTRCXmfQk6cMF5mvfMj2f10.webp',
             'tourguide-rendszerek' => 'services/uHqNENGydLnSLw0KG5qExyNe1p6Nb29COqf3SlV0.webp',
             'mobil-hangositas' => 'services/13hecgDqkFiXo4uSFCT5viRYg90IR0P4RzNtLXDV.webp',
-            'veszhangositas-evakuacio' => 'services/AdqTu6NFBOwz5TSy9wYmyWONPMfrEMNDp83EocGw.webp',
             'ablak-atbeszelo-recepcio' => 'services/0dMMBprvNnGPAVpGUAHNKrTsKE1ioR7u4JWpsusV.webp',
         ];
 

@@ -56,6 +56,7 @@ class ProjectForm
                     ->default(null),
                 FileUpload::make('og_image')
                     ->image()
+                    ->disk('public')
                     ->saveUploadedFileUsing(ImageOptimizer::filamentSaveUsing(1200, 630)),
             ]);
     }

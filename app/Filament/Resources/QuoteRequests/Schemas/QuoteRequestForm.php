@@ -120,7 +120,7 @@ class QuoteRequestForm
                         TextInput::make('area_sqm')
                             ->label('Becsült alapterület (m²)')
                             ->numeric()
-                            ->default(null),
+                            ->required(),
                     ]),
 
                 Section::make('Rendszer és eszközök')
