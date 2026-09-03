@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Külön, navigáció nélküli hero-előnézet. A főoldalt nem érinti.
+Route::view('/templomos', 'templomos')->name('templomos.preview');
+Route::view('/templom', 'templomos')->name('templom.preview');
+
 Route::post('/webhooks/resend/inbound', [ResendInboundWebhookController::class, 'handle'])
     ->middleware('throttle:60,1')
     ->name('webhooks.resend.inbound');

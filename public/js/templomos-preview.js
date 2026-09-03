@@ -1,0 +1,15 @@
+(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const hero = document.querySelector('#church-hero');
+    if (!hero) return;
+    const paths = [...hero.querySelectorAll('[data-church-path]')];
+    paths.forEach((path, index) => {
+        const length = path.getTotalLength();
+        path.style.strokeDasharray = `28 ${Math.max(length - 28, 1)}`;
+        path.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
+            duration: index === 0 ? 5000 : 7200, delay: index ? 3250 : 0, iterations: Infinity,
+            easing: 'linear', direction: 'normal', endDelay: index ? 2200 : 2800,
+        });
+    });
+    hero.querySelector('.hero-image').animate([{ transform: 'scale(1.015)' }, { transform: 'scale(1.055)' }], { duration: 22000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
+})();
