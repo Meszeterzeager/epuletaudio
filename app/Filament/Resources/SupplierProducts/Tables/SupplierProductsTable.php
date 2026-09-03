@@ -44,12 +44,17 @@ class SupplierProductsTable
                     ->searchable()
                     ->placeholder('-')
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('files_count')
-                    ->label('Dok.')
-                    ->counts('files')
+                TextColumn::make('stock_status')
+                    ->label('Elérhetőség')
                     ->badge()
-                    ->color('gray')
-                    ->placeholder('-'),
+                    ->color(fn (?string $state): string => match (true) {
+                        $state === null => 'gray',
+                        str_contains(mb_strtolower($state), 'raktáron') => 'success',
+                        str_contains(mb_strtolower($state), 'hiány') || str_contains(mb_strtolower($state), 'megszűnt') => 'danger',
+                        default => 'warning',
+                    })
+                    ->placeholder('-')
+                    ->wrap(),
                 TextColumn::make('last_price_updated_at')
                     ->dateTime()
                     ->placeholder('-')
@@ -76,6 +81,7 @@ class SupplierProductsTable
                     ->relationship('supplier', 'name'),
                 SelectFilter::make('category')
                     ->label('Kategória')
+                    ->searchable()
                     ->options(fn () => SupplierProduct::query()
                         ->whereNotNull('category')
                         ->where('category', '!=', '')

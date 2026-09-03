@@ -59,6 +59,33 @@ services:
     networks:
       - epa_network
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: ["php", "artisan", "schedule:work"]
+    env_file: .env
+    environment:
+      TZ: Europe/Budapest
+      DB_HOST: mysql
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+    healthcheck:
+      disable: true
+    volumes:
+      - ./storage/app:/app/storage/app
+      - app_logs:/app/storage/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - epa_network
+
   mysql:
     image: mariadb:10.11
     restart: unless-stopped

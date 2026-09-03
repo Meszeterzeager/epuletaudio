@@ -19,6 +19,8 @@ class SupplierProduct extends Model
         'selling_price',
         'currency',
         'unit',
+        'stock_status',
+        'stock_checked_at',
         'is_active',
         'is_public_showcase',
         'last_price_updated_at',
@@ -32,6 +34,7 @@ class SupplierProduct extends Model
             'is_active' => 'boolean',
             'is_public_showcase' => 'boolean',
             'last_price_updated_at' => 'datetime',
+            'stock_checked_at' => 'datetime',
         ];
     }
 

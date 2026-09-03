@@ -49,6 +49,14 @@ class SupplierProductInfolist
                 TextEntry::make('unit')
                     ->label('Egység')
                     ->placeholder('-'),
+                TextEntry::make('stock_status')
+                    ->label('Elérhetőség')
+                    ->badge()
+                    ->placeholder('-'),
+                TextEntry::make('stock_checked_at')
+                    ->label('Készlet ellenőrizve')
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('last_price_updated_at')
                     ->label('Ár frissítve')
                     ->dateTime()

@@ -46,6 +46,17 @@ class ProductsRelationManager extends RelationManager
                 TextColumn::make('category')
                     ->label('Kategória')
                     ->searchable(),
+                TextColumn::make('stock_status')
+                    ->label('Elérhetőség')
+                    ->badge()
+                    ->color(fn (?string $state): string => match (true) {
+                        $state === null => 'gray',
+                        str_contains(mb_strtolower($state), 'raktáron') => 'success',
+                        str_contains(mb_strtolower($state), 'hiány') || str_contains(mb_strtolower($state), 'megszűnt') => 'danger',
+                        default => 'warning',
+                    })
+                    ->placeholder('-')
+                    ->wrap(),
                 TextColumn::make('selling_price')
                     ->label('Eladási ár (nettó)')
                     ->money(fn ($record) => $record->currency)
@@ -59,6 +70,7 @@ class ProductsRelationManager extends RelationManager
             ->filters([
                 SelectFilter::make('category')
                     ->label('Kategória')
+                    ->searchable()
                     ->options(fn () => SupplierProduct::query()
                         ->whereNotNull('category')
                         ->where('category', '!=', '')

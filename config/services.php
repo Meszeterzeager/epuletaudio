@@ -36,4 +36,10 @@ return [
         ],
     ],
 
+    'elimex' => [
+        'url' => env('ELIMEX_API_URL', 'https://elimex.hu/api/pricelist'),
+        'username' => env('ELIMEX_API_USERNAME'),
+        'password' => env('ELIMEX_API_PASSWORD'),
+    ],
+
 ];

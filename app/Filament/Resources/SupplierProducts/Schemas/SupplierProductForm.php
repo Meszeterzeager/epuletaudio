@@ -74,6 +74,9 @@ class SupplierProductForm
                 TextInput::make('unit')
                     ->default(null)
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
+                TextInput::make('stock_status')
+                    ->label('Elérhetőség')
+                    ->default(null),
                 DateTimePicker::make('last_price_updated_at'),
             ]);
     }
