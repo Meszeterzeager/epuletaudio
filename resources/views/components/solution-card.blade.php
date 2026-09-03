@@ -8,7 +8,7 @@
 >
     @if ($solution->hero_image)
         <img
-            src="{{ Storage::url($solution->hero_image) }}"
+            src="{{ \App\Services\ImageOptimizer::thumbUrl($solution->hero_image) }}"
             alt=""
             class="absolute inset-0 h-full w-full object-cover opacity-50 transition-all duration-500 group-hover:opacity-70 group-hover:scale-105"
             loading="lazy"
