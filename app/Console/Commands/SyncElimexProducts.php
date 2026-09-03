@@ -14,6 +14,21 @@ class SyncElimexProducts extends Command
 
     protected $description = 'Az Elimex árlista API-ból frissíti a beszállítói termékeket (ár, kategória, készlet)';
 
+    /**
+     * Az Elimex árlista bruttó (ÁFA-s) árakat ad, a supplier_products.selling_price
+     * és .purchase_price mezők viszont nettó árat tárolnak.
+     */
+    private const VAT_RATE = 1.27;
+
+    private function grossToNet(string $gross): ?string
+    {
+        if ($gross === '' || ! is_numeric($gross)) {
+            return null;
+        }
+
+        return number_format(((float) $gross) / self::VAT_RATE, 2, '.', '');
+    }
+
     public function handle(): int
     {
         $username = config('services.elimex.username');
@@ -84,7 +99,8 @@ class SyncElimexProducts extends Command
             }
 
             $name = trim($fields[1] ?? '');
-            $purchasePrice = trim($fields[7] ?? '');
+            $listPriceGross = trim($fields[6] ?? '');
+            $ourPriceGross = trim($fields[7] ?? '');
             $unit = trim($fields[8] ?? '');
             $lastPriceChange = trim($fields[10] ?? '');
             $stockStatus = trim($fields[12] ?? '');
@@ -103,7 +119,8 @@ class SyncElimexProducts extends Command
                 'sku' => $sku,
                 'name' => $name !== '' ? $name : $sku,
                 'category' => $category !== '' ? Str::replace('/', ' - ', $category) : null,
-                'purchase_price' => $purchasePrice !== '' ? $purchasePrice : null,
+                'purchase_price' => $this->grossToNet($ourPriceGross),
+                'selling_price' => $this->grossToNet($listPriceGross),
                 'currency' => 'HUF',
                 'unit' => $unit !== '' ? $unit : null,
                 'stock_status' => $stockStatus !== '' ? $stockStatus : null,
@@ -123,7 +140,7 @@ class SyncElimexProducts extends Command
             DB::table('supplier_products')->upsert(
                 $chunk,
                 ['supplier_id', 'sku'],
-                ['name', 'category', 'purchase_price', 'currency', 'unit', 'stock_status', 'stock_checked_at', 'last_price_updated_at', 'updated_at']
+                ['name', 'category', 'purchase_price', 'selling_price', 'currency', 'unit', 'stock_status', 'stock_checked_at', 'last_price_updated_at', 'updated_at']
             );
             $updated += count($chunk);
         }
