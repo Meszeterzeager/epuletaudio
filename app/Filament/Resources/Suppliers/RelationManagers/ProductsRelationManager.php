@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Suppliers\RelationManagers;
 
 use App\Filament\Resources\SupplierProducts\Schemas\SupplierProductForm;
+use App\Models\SupplierProduct;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -12,6 +13,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ProductsRelationManager extends RelationManager
@@ -53,6 +55,17 @@ class ProductsRelationManager extends RelationManager
                     ->money(fn ($record) => $record->currency)
                     ->placeholder('-')
                     ->sortable(),
+            ])
+            ->filters([
+                SelectFilter::make('category')
+                    ->label('Kategória')
+                    ->options(fn () => SupplierProduct::query()
+                        ->whereNotNull('category')
+                        ->where('category', '!=', '')
+                        ->distinct()
+                        ->orderBy('category')
+                        ->pluck('category', 'category')
+                        ->all()),
             ])
             ->headerActions([
                 CreateAction::make(),

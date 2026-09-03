@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SupplierProducts\Tables;
 
 use App\Filament\Resources\SupplierProducts\SupplierProductResource;
+use App\Models\SupplierProduct;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\ImageColumn;
@@ -73,6 +74,15 @@ class SupplierProductsTable
                 SelectFilter::make('supplier_id')
                     ->label('Beszállító')
                     ->relationship('supplier', 'name'),
+                SelectFilter::make('category')
+                    ->label('Kategória')
+                    ->options(fn () => SupplierProduct::query()
+                        ->whereNotNull('category')
+                        ->where('category', '!=', '')
+                        ->distinct()
+                        ->orderBy('category')
+                        ->pluck('category', 'category')
+                        ->all()),
             ])
             ->recordUrl(fn ($record): string => SupplierProductResource::getUrl('edit', ['record' => $record]))
             ->toolbarActions([
