@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Templomi hangosítás — hero előnézet</title>
-    <link rel="stylesheet" href="{{ asset('css/templomos-preview.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/templomos-preview.css') }}?v={{ filemtime(public_path('css/templomos-preview.css')) }}">
 </head>
 <body>
     <main>
@@ -56,6 +56,6 @@
 
         </section>
     </main>
-    <script src="{{ asset('js/templomos-preview.js') }}" defer></script>
+    <script src="{{ asset('js/templomos-preview.js') }}?v={{ filemtime(public_path('js/templomos-preview.js')) }}" defer></script>
 </body>
 </html>

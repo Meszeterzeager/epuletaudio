@@ -7,8 +7,8 @@
         const length = path.getTotalLength();
         path.style.strokeDasharray = `28 ${Math.max(length - 28, 1)}`;
         path.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
-            duration: index === 0 ? 5000 : 7200, delay: index ? 350 : 0, iterations: Infinity,
-            easing: 'linear', direction: 'normal', endDelay: index ? 2200 : 2800,
+            duration: index === 0 ? 600 : 1500, delay: index ? 200 : 0, iterations: Infinity,
+            easing: 'ease-out', direction: 'normal', endDelay: index ? 1300 : 1500,
         });
     });
     hero.querySelector('.hero-image').animate([{ transform: 'scale(1.015)' }, { transform: 'scale(1.055)' }], { duration: 22000, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
