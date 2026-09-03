@@ -7,7 +7,7 @@
         const length = path.getTotalLength();
         path.style.strokeDasharray = `28 ${Math.max(length - 28, 1)}`;
         path.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
-            duration: index === 0 ? 5000 : 7200, delay: index ? 3250 : 0, iterations: Infinity,
+            duration: index === 0 ? 5000 : 7200, delay: index ? 350 : 0, iterations: Infinity,
             easing: 'linear', direction: 'normal', endDelay: index ? 2200 : 2800,
         });
     });
