@@ -25,6 +25,7 @@
                 @if (\App\Models\Setting::getBool('references_enabled'))
                     <li><a href="{{ route('projects.index') }}" wire:navigate class="hover:text-cream">Referenciák</a></li>
                 @endif
+                <li><a href="{{ route('brands') }}" wire:navigate class="hover:text-cream">Márkáink</a></li>
                 <li><a href="{{ route('about') }}" wire:navigate class="hover:text-cream">Rólunk</a></li>
                 <li><a href="{{ route('blog.index') }}" wire:navigate class="hover:text-cream">Tudástár</a></li>
                 <li><a href="{{ route('contact') }}" wire:navigate class="hover:text-cream">Kapcsolat</a></li>

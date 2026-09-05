@@ -2,6 +2,7 @@
     $navLinks = [
         ['label' => 'Szolgáltatások', 'route' => 'services.index'],
         ['label' => 'Megoldások', 'route' => 'solutions.index'],
+        ['label' => 'Márkáink', 'route' => 'brands'],
         ['label' => 'Referenciák', 'route' => 'projects.index', 'visible' => \App\Models\Setting::getBool('references_enabled')],
         ['label' => 'Rólunk', 'route' => 'about'],
         ['label' => 'Tudástár', 'route' => 'blog.index'],

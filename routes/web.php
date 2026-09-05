@@ -40,6 +40,7 @@ Route::prefix('referenciak')->group(function () {
 
 Route::get('/rolunk', [PageController::class, 'about'])->name('about');
 Route::get('/kapcsolat', [PageController::class, 'contact'])->name('contact');
+Route::view('/markaink', 'brands')->name('brands');
 
 Route::view('/ajanlatkeres', 'quote')->name('quote.create');
 
