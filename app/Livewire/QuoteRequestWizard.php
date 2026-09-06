@@ -99,7 +99,7 @@ class QuoteRequestWizard extends Component
     ];
 
     public const TOUR_TYPES = [
-        'kulfoldi_utazas' => 'Külföldi utazás',
+        'kulfoldi_utazas' => 'Külföldi utazás (utazási iroda)',
         'belfoldi_utazas' => 'Belföldi utazás (utazási iroda)',
         'muzeum' => 'Múzeum',
         'gyartura' => 'Gyártúra / gyárlátogatás',
@@ -199,9 +199,11 @@ class QuoteRequestWizard extends Component
 
     public string $conference_room_sound_system_other = '';
 
-    public array $mobile_speaker_type = [];
+    public string $mobile_speaker_type = '';
 
     public string $amplifier_type = '';
+
+    public string $amplifier_type_other = '';
 
     public ?int $group_size = null;
 
@@ -221,6 +223,10 @@ class QuoteRequestWizard extends Component
     public bool $wants_installation = false;
 
     public bool $wants_site_survey = false;
+
+    public string $site_survey_address = '';
+
+    public string $site_survey_notes = '';
 
     public string $delivery_method = '';
 
@@ -254,6 +260,30 @@ class QuoteRequestWizard extends Component
         return $this->requested_system === $key;
     }
 
+    public function removeFloorPlan(int $index): void
+    {
+        unset($this->floor_plans[$index]);
+        $this->floor_plans = array_values($this->floor_plans);
+    }
+
+    public function removePhoto(int $index): void
+    {
+        unset($this->photos[$index]);
+        $this->photos = array_values($this->photos);
+    }
+
+    public function removeVideoFile(): void
+    {
+        $this->video_file = null;
+    }
+
+    public function updatedBudgetHuf(string $value): void
+    {
+        // Csak számjegyeket engedünk — a Ft/pont/szóköz formázást mi tesszük
+        // hozzá, hogy egységes maradjon az admin felületen és az emailekben.
+        $this->budget_huf = preg_replace('/[^0-9]/', '', $value) ?? '';
+    }
+
     public function updatedPhone(string $value): void
     {
         // Csak szabványos telefonszám-karakterek maradhatnak — számjegyek,
@@ -281,7 +311,10 @@ class QuoteRequestWizard extends Component
                 'company' => ['nullable', 'string', 'max:255'],
             ],
             2 => [
-                'building_type' => ['required', 'string', Rule::in(array_keys(self::BUILDING_TYPES))],
+                'building_type' => [
+                    Rule::requiredIf(fn () => ! $this->hasSystem('tourguide_rendszer')),
+                    'nullable', 'string', Rule::in(array_keys(self::BUILDING_TYPES)),
+                ],
                 'requested_system' => ['required', 'string', Rule::in(array_keys(self::REQUESTED_SYSTEMS))],
                 'space_character' => ['nullable', 'string', Rule::in(array_keys(self::SPACE_CHARACTERS))],
                 'sound_system_type' => [
@@ -325,9 +358,9 @@ class QuoteRequestWizard extends Component
                 'conference_recording_type' => ['nullable', 'string', Rule::in(array_keys(self::CONFERENCE_RECORDING_TYPES))],
                 'conference_room_sound_system_type' => ['nullable', 'string', Rule::in(array_keys(self::CONFERENCE_ROOM_SOUND_SYSTEM_TYPES))],
                 'conference_room_sound_system_other' => ['nullable', 'string', 'max:255'],
-                'mobile_speaker_type' => ['nullable', 'array'],
-                'mobile_speaker_type.*' => [Rule::in(array_keys(self::MOBILE_SPEAKER_TYPES))],
+                'mobile_speaker_type' => ['nullable', 'string', Rule::in(array_keys(self::MOBILE_SPEAKER_TYPES))],
                 'amplifier_type' => ['nullable', 'string', Rule::in(array_keys(self::AMPLIFIER_TYPES))],
+                'amplifier_type_other' => ['nullable', 'string', 'max:500'],
                 'group_size' => ['nullable', 'integer', 'min:0'],
                 'tour_guide_count' => ['nullable', 'integer', 'min:0'],
                 'needs_transport_case' => ['boolean'],
@@ -336,9 +369,14 @@ class QuoteRequestWizard extends Component
             ],
             4 => [
                 'priority' => ['nullable', 'string', Rule::in(array_keys(self::PRIORITIES))],
-                'budget_huf' => ['nullable', 'string', 'max:100'],
+                'budget_huf' => ['nullable', 'string', 'max:20', 'regex:/^[0-9]*$/'],
                 'wants_installation' => ['boolean'],
                 'wants_site_survey' => ['boolean'],
+                'site_survey_address' => [
+                    Rule::requiredIf(fn () => $this->wants_site_survey),
+                    'nullable', 'string', 'max:255',
+                ],
+                'site_survey_notes' => ['nullable', 'string', 'max:1000'],
                 'delivery_method' => [
                     Rule::requiredIf(fn () => $this->hasSystem('tourguide_rendszer')),
                     'nullable', 'string', Rule::in(array_keys(self::DELIVERY_METHODS)),
@@ -378,6 +416,7 @@ class QuoteRequestWizard extends Component
             'floor_plans.max' => 'Legfeljebb 5 alaprajz-fájlt tölthetsz fel.',
             'photos.max' => 'Legfeljebb 20 fotót tölthetsz fel.',
             'video_file.max' => 'A videó mérete legfeljebb 100 MB lehet.',
+            'budget_huf.regex' => 'A tervezett keretet kérjük, csak számmal add meg.',
             'gdpr_consent.accepted' => 'Az Adatkezelési Tájékoztató elfogadása kötelező a folytatáshoz.',
         ];
     }
@@ -479,8 +518,9 @@ class QuoteRequestWizard extends Component
             'conference_recording_type' => $this->conference_recording_type ?: null,
             'conference_room_sound_system_type' => $this->conference_room_sound_system_type ?: null,
             'conference_room_sound_system_other' => $this->conference_room_sound_system_type === 'egyeb' ? ($this->conference_room_sound_system_other ?: null) : null,
-            'mobile_speaker_type' => $this->mobile_speaker_type,
+            'mobile_speaker_type' => $this->mobile_speaker_type ? [$this->mobile_speaker_type] : [],
             'amplifier_type' => $this->amplifier_type ?: null,
+            'amplifier_type_other' => $this->amplifier_type === 'nem_tudom' ? ($this->amplifier_type_other ?: null) : null,
             'group_size' => $this->group_size,
             'tour_guide_count' => $this->tour_guide_count,
             'needs_transport_case' => $this->needs_transport_case,
@@ -490,6 +530,8 @@ class QuoteRequestWizard extends Component
             'budget_huf' => $this->budget_huf ?: null,
             'wants_installation' => $isTourGuide ? false : $this->wants_installation,
             'wants_site_survey' => $isTourGuide ? false : $this->wants_site_survey,
+            'site_survey_address' => $this->wants_site_survey ? ($this->site_survey_address ?: null) : null,
+            'site_survey_notes' => $this->wants_site_survey ? ($this->site_survey_notes ?: null) : null,
             'delivery_method' => $isTourGuide ? ($this->delivery_method ?: null) : null,
             'needed_by_date' => $this->needed_by_date ?: null,
             'video_url' => $this->video_url ?: null,

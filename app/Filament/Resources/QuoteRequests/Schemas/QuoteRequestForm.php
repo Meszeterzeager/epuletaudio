@@ -174,7 +174,7 @@ class QuoteRequestForm
                             ->default(null)
                             ->visible(fn (Get $get): bool => in_array('konferenciarendszer', $get('requested_systems') ?? [])),
                         TextInput::make('conference_moderator_count')
-                            ->label('Konferencia moderátorok száma')
+                            ->label('Tervezett konferencia max. létszáma')
                             ->numeric()
                             ->default(null)
                             ->visible(fn (Get $get): bool => in_array('konferenciarendszer', $get('requested_systems') ?? [])),
@@ -232,6 +232,9 @@ class QuoteRequestForm
                         Select::make('amplifier_type')
                             ->label('Erősítő típusa (mobil hangosítás)')
                             ->options(self::AMPLIFIER_TYPES)
+                            ->default(null),
+                        TextInput::make('amplifier_type_other')
+                            ->label('Erősítő típusa — egyéb leírás')
                             ->default(null),
                         Select::make('project_stage')
                             ->label('Létesítmény / helyiség stádiuma')
@@ -319,6 +322,13 @@ class QuoteRequestForm
                             ->label('Kivitelezésre is kér ajánlatot'),
                         Toggle::make('wants_site_survey')
                             ->label('Előzetes helyszíni felmérést kér'),
+                        TextInput::make('site_survey_address')
+                            ->label('Helyszíni felmérés címe')
+                            ->default(null),
+                        Textarea::make('site_survey_notes')
+                            ->label('Helyszíni felmérés — egyéb infó')
+                            ->default(null)
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Egyéb')

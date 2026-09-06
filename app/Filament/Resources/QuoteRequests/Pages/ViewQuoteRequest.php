@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\QuoteRequests\Pages;
 
 use App\Filament\Resources\QuoteRequests\QuoteRequestResource;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewQuoteRequest extends ViewRecord
@@ -13,8 +12,11 @@ class ViewQuoteRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            QuoteRequestResource::sendProcessingNotificationAction(),
+            QuoteRequestResource::sendClarificationNeededAction(),
             QuoteRequestResource::sendOfferAction(),
-            EditAction::make(),
+            QuoteRequestResource::markAsOrderedAction(),
+            QuoteRequestResource::editInternalNotesAction(),
         ];
     }
 }

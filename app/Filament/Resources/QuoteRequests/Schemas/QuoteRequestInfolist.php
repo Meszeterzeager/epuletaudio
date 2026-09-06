@@ -84,7 +84,7 @@ class QuoteRequestInfolist
                             ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::CONFERENCE_ROOM_TYPES[$state] ?? '-')
                             ->placeholder('-'),
                         TextEntry::make('conference_moderator_count')
-                            ->label('Konferencia moderátorok száma')
+                            ->label('Tervezett konferencia max. létszáma')
                             ->placeholder('-'),
                         TextEntry::make('tour_type')
                             ->label('Vezetett túra típusa')
@@ -137,6 +137,9 @@ class QuoteRequestInfolist
                         TextEntry::make('amplifier_type')
                             ->label('Erősítő típusa (mobil)')
                             ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::AMPLIFIER_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
+                        TextEntry::make('amplifier_type_other')
+                            ->label('Erősítő típusa — egyéb leírás')
                             ->placeholder('-'),
                         TextEntry::make('project_stage')
                             ->label('Létesítmény / helyiség stádiuma')
@@ -207,6 +210,7 @@ class QuoteRequestInfolist
                             ->placeholder('-'),
                         TextEntry::make('budget_huf')
                             ->label('Tervezett keret')
+                            ->formatStateUsing(fn (?string $state): ?string => ctype_digit((string) $state) ? number_format((float) $state, 0, ',', ' ').' Ft' : $state)
                             ->placeholder('-'),
                         TextEntry::make('needed_by_date')
                             ->label('Legkésőbb szükséges dátum')
@@ -222,6 +226,13 @@ class QuoteRequestInfolist
                         IconEntry::make('wants_site_survey')
                             ->label('Előzetes helyszíni felmérést kér')
                             ->boolean(),
+                        TextEntry::make('site_survey_address')
+                            ->label('Helyszíni felmérés címe')
+                            ->placeholder('-'),
+                        TextEntry::make('site_survey_notes')
+                            ->label('Helyszíni felmérés — egyéb infó')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Egyéb')
@@ -248,6 +259,12 @@ class QuoteRequestInfolist
                         TextEntry::make('status')
                             ->label('Státusz')
                             ->badge(),
+                        IconEntry::make('is_processing')
+                            ->label('Feldolgozás alatt')
+                            ->boolean(),
+                        IconEntry::make('needs_clarification')
+                            ->label('Egyeztetés szükséges')
+                            ->boolean(),
                         TextEntry::make('internal_notes')
                             ->label('Belső jegyzet')
                             ->placeholder('-')

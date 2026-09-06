@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Mail\OrderConfirmedMail;
 use App\Services\PurchaseOrderGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Mail;
 
 class QuoteRequest extends Model
 {
@@ -29,6 +31,7 @@ class QuoteRequest extends Model
         'mobile_area_size',
         'mobile_speaker_type',
         'amplifier_type',
+        'amplifier_type_other',
         'tour_type',
         'group_size',
         'tour_guide_count',
@@ -54,6 +57,8 @@ class QuoteRequest extends Model
         'budget_huf',
         'wants_installation',
         'wants_site_survey',
+        'site_survey_address',
+        'site_survey_notes',
         'needed_by_date',
         'video_url',
         'message',
@@ -61,6 +66,8 @@ class QuoteRequest extends Model
         'gdpr_consent',
         'status',
         'internal_notes',
+        'is_processing',
+        'needs_clarification',
     ];
 
     protected function casts(): array
@@ -79,6 +86,8 @@ class QuoteRequest extends Model
             'wants_installation' => 'boolean',
             'wants_site_survey' => 'boolean',
             'gdpr_consent' => 'boolean',
+            'is_processing' => 'boolean',
+            'needs_clarification' => 'boolean',
             'area_sqm' => 'decimal:2',
             'width_m' => 'decimal:2',
             'length_m' => 'decimal:2',
@@ -114,6 +123,8 @@ class QuoteRequest extends Model
         static::updated(function (QuoteRequest $quoteRequest): void {
             if ($quoteRequest->wasChanged('status') && $quoteRequest->status === 'ordered') {
                 app(PurchaseOrderGenerator::class)->generateForQuoteRequest($quoteRequest);
+
+                Mail::to($quoteRequest->email)->queue(new OrderConfirmedMail($quoteRequest));
             }
         });
     }

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\QuoteRequests;
 
 use App\Filament\Resources\QuoteRequests\Pages\CreateQuoteRequest;
-use App\Filament\Resources\QuoteRequests\Pages\EditQuoteRequest;
 use App\Filament\Resources\QuoteRequests\Pages\ListQuoteRequests;
 use App\Filament\Resources\QuoteRequests\Pages\ViewQuoteRequest;
 use App\Filament\Resources\QuoteRequests\RelationManagers\FilesRelationManager;
@@ -13,6 +12,7 @@ use App\Filament\Resources\QuoteRequests\Schemas\QuoteRequestForm;
 use App\Filament\Resources\QuoteRequests\Schemas\QuoteRequestInfolist;
 use App\Filament\Resources\QuoteRequests\Tables\QuoteRequestsTable;
 use App\Mail\QuoteOfferMail;
+use App\Mail\QuoteRequestStatusMail;
 use App\Models\EmailFolder;
 use App\Models\EmailMessage;
 use App\Models\QuoteRequest;
@@ -96,18 +96,7 @@ class QuoteRequestResource extends Resource
 
                 Mail::to($record->email)->send($mailable);
 
-                EmailMessage::create([
-                    'folder_id' => EmailFolder::sent()->id,
-                    'thread_id' => (string) Str::uuid(),
-                    'direction' => 'outbound',
-                    'status' => 'read',
-                    'from_email' => config('mail.from.address'),
-                    'from_name' => config('mail.from.name'),
-                    'to' => [$record->email],
-                    'subject' => $data['subject'],
-                    'body_html' => $mailable->render(),
-                    'sent_at' => now(),
-                ]);
+                self::logSentEmail($record, $data['subject'], $mailable->render());
 
                 if ($record->status === 'new') {
                     $record->update(['status' => 'quote_issued']);
@@ -115,6 +104,141 @@ class QuoteRequestResource extends Resource
 
                 Notification::make()
                     ->title('Ajánlat elküldve')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    public static function sendProcessingNotificationAction(): Action
+    {
+        return Action::make('sendProcessingNotification')
+            ->label('Feldolgozás alatt — email küldése')
+            ->icon('heroicon-o-clock')
+            ->color('gray')
+            ->visible(fn (QuoteRequest $record): bool => ! $record->is_processing)
+            ->modalHeading('Feldolgozás alatt — email küldése')
+            ->modalDescription('Az email elküldése után a kérés "Feldolgozás alatt" jelölést kap.')
+            ->modalSubmitActionLabel('Küldés')
+            ->schema(fn (QuoteRequest $record): array => [
+                TextInput::make('subject')
+                    ->label('Tárgy')
+                    ->default('Ajánlatkérésed feldolgozás alatt — '.config('app.name'))
+                    ->required(),
+                Textarea::make('message')
+                    ->label('Üzenet')
+                    ->rows(8)
+                    ->default("Köszönjük megkeresésed! Értesítünk, hogy megkezdtük az ajánlatkérésed feldolgozását, hamarosan jelentkezünk a részletekkel.")
+                    ->required(),
+            ])
+            ->action(function (array $data, QuoteRequest $record): void {
+                $mailable = new QuoteRequestStatusMail($record, $data['subject'], $data['message']);
+
+                Mail::to($record->email)->send($mailable);
+
+                self::logSentEmail($record, $data['subject'], $mailable->render());
+
+                $record->update(['is_processing' => true]);
+
+                Notification::make()
+                    ->title('Email elküldve')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    public static function sendClarificationNeededAction(): Action
+    {
+        return Action::make('sendClarificationNeeded')
+            ->label('Egyeztetés szükséges — email küldése')
+            ->icon('heroicon-o-chat-bubble-left-right')
+            ->color('warning')
+            ->visible(fn (QuoteRequest $record): bool => ! $record->needs_clarification)
+            ->modalHeading('Egyeztetés szükséges — email küldése')
+            ->modalDescription('Az email elküldése után a kérés "Egyeztetés szükséges" jelölést kap.')
+            ->modalSubmitActionLabel('Küldés')
+            ->schema(fn (QuoteRequest $record): array => [
+                TextInput::make('subject')
+                    ->label('Tárgy')
+                    ->default('Pontosításra van szükségünk — '.config('app.name'))
+                    ->required(),
+                Textarea::make('message')
+                    ->label('Üzenet')
+                    ->rows(8)
+                    ->default("Köszönjük megkeresésed! A pontos ajánlat elkészítéséhez az alábbi kérdés(ek)ben szeretnénk egyeztetni veled:\n\n")
+                    ->required(),
+            ])
+            ->action(function (array $data, QuoteRequest $record): void {
+                $mailable = new QuoteRequestStatusMail($record, $data['subject'], $data['message']);
+
+                Mail::to($record->email)->send($mailable);
+
+                self::logSentEmail($record, $data['subject'], $mailable->render());
+
+                $record->update(['needs_clarification' => true]);
+
+                Notification::make()
+                    ->title('Email elküldve')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    public static function editInternalNotesAction(): Action
+    {
+        return Action::make('editInternalNotes')
+            ->label('Belső jegyzet szerkesztése')
+            ->icon('heroicon-o-pencil-square')
+            ->color('gray')
+            ->modalHeading('Belső jegyzet szerkesztése')
+            ->modalSubmitActionLabel('Mentés')
+            ->schema(fn (QuoteRequest $record): array => [
+                Textarea::make('internal_notes')
+                    ->label('Belső jegyzet')
+                    ->helperText('Csak admin számára látható.')
+                    ->rows(6)
+                    ->default($record->internal_notes),
+            ])
+            ->action(function (array $data, QuoteRequest $record): void {
+                $record->update(['internal_notes' => $data['internal_notes'] ?: null]);
+
+                Notification::make()
+                    ->title('Jegyzet mentve')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    protected static function logSentEmail(QuoteRequest $record, string $subject, string $bodyHtml): void
+    {
+        EmailMessage::create([
+            'folder_id' => EmailFolder::sent()->id,
+            'thread_id' => (string) Str::uuid(),
+            'direction' => 'outbound',
+            'status' => 'read',
+            'from_email' => config('mail.from.address'),
+            'from_name' => config('mail.from.name'),
+            'to' => [$record->email],
+            'subject' => $subject,
+            'body_html' => $bodyHtml,
+            'sent_at' => now(),
+        ]);
+    }
+
+    public static function markAsOrderedAction(): Action
+    {
+        return Action::make('markAsOrdered')
+            ->label('Megrendelés rögzítése')
+            ->icon('heroicon-o-shopping-cart')
+            ->color('success')
+            ->visible(fn (QuoteRequest $record): bool => $record->status !== 'ordered')
+            ->requiresConfirmation()
+            ->modalHeading('Megrendelés rögzítése')
+            ->modalDescription('Az ajánlat lezárásra kerül mint megrendelt, és automatikusan létrejönnek a szükséges beszerzési rendelések a beszállítók felé.')
+            ->action(function (QuoteRequest $record): void {
+                $record->update(['status' => 'ordered']);
+
+                Notification::make()
+                    ->title('Megrendelés rögzítve')
                     ->success()
                     ->send();
             });
@@ -135,7 +259,6 @@ class QuoteRequestResource extends Resource
             'index' => ListQuoteRequests::route('/'),
             'create' => CreateQuoteRequest::route('/create'),
             'view' => ViewQuoteRequest::route('/{record}'),
-            'edit' => EditQuoteRequest::route('/{record}/edit'),
         ];
     }
 }

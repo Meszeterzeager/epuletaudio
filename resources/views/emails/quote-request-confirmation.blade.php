@@ -17,7 +17,9 @@ Megkaptuk a beadott adataidat, hamarosan felvesszük veled a kapcsolatot. Az át
 @endif
 
 ## Projekt és tér
+@if ($quoteRequest->building_type)
 - Épület/intézmény típusa: {{ $w::BUILDING_TYPES[$quoteRequest->building_type] ?? $quoteRequest->building_type }}
+@endif
 - Kért rendszerek: {{ collect($systems)->map(fn ($s) => $w::REQUESTED_SYSTEMS[$s] ?? $s)->join(', ') }}
 @if ($quoteRequest->space_character)
 - Tér / zóna jellege: {{ $w::SPACE_CHARACTERS[$quoteRequest->space_character] ?? $quoteRequest->space_character }}
@@ -41,7 +43,7 @@ Megkaptuk a beadott adataidat, hamarosan felvesszük veled a kapcsolatot. Az át
 - Kihangosítandó létszám / terület: {{ $quoteRequest->mobile_headcount ? $quoteRequest->mobile_headcount.' fő' : '-' }} / {{ $quoteRequest->mobile_area_size ?: '-' }}
 @endif
 @if ($quoteRequest->conference_moderator_count)
-- Konferencia moderátorok száma: {{ $quoteRequest->conference_moderator_count }}
+- Tervezett konferencia max. létszáma: {{ $quoteRequest->conference_moderator_count }}
 @endif
 @if ($hasSystem('epulethangositas'))
 - Van álmennyezet: {{ $quoteRequest->has_suspended_ceiling ? 'igen' : 'nem' }}@if ($quoteRequest->has_suspended_ceiling && $quoteRequest->suspended_ceiling_type) ({{ $quoteRequest->suspended_ceiling_type }})@endif
@@ -58,7 +60,7 @@ Megkaptuk a beadott adataidat, hamarosan felvesszük veled a kapcsolatot. Az át
 - Hangsugárzók jellege: {{ collect($quoteRequest->mobile_speaker_type)->map(fn ($s) => $w::MOBILE_SPEAKER_TYPES[$s] ?? $s)->join(', ') }}
 @endif
 @if ($quoteRequest->amplifier_type)
-- Erősítő típusa: {{ $w::AMPLIFIER_TYPES[$quoteRequest->amplifier_type] ?? $quoteRequest->amplifier_type }}
+- Erősítő típusa: {{ $w::AMPLIFIER_TYPES[$quoteRequest->amplifier_type] ?? $quoteRequest->amplifier_type }}@if ($quoteRequest->amplifier_type === 'nem_tudom' && $quoteRequest->amplifier_type_other) — {{ $quoteRequest->amplifier_type_other }}@endif
 @endif
 @if ($quoteRequest->conference_president_mic_count || $quoteRequest->conference_delegate_mic_count)
 - Elnöki / delegált mikrofonok száma: {{ $quoteRequest->conference_president_mic_count ?? 0 }} / {{ $quoteRequest->conference_delegate_mic_count ?? 0 }}
@@ -95,13 +97,19 @@ Megkaptuk a beadott adataidat, hamarosan felvesszük veled a kapcsolatot. Az át
 - Fontosabb szempont: {{ $w::PRIORITIES[$quoteRequest->priority] ?? $quoteRequest->priority }}
 @endif
 @if ($quoteRequest->budget_huf)
-- Tervezett keret: {{ $quoteRequest->budget_huf }}
+- Tervezett keret: {{ number_format((float) $quoteRequest->budget_huf, 0, ',', ' ') }} Ft
 @endif
 @if ($quoteRequest->delivery_method)
 - Kézbesítés módja: {{ $w::DELIVERY_METHODS[$quoteRequest->delivery_method] ?? $quoteRequest->delivery_method }}
 @else
 - Kivitelezésre is kér ajánlatot: {{ $quoteRequest->wants_installation ? 'igen' : 'nem' }}
 - Előzetes helyszíni felmérést kér: {{ $quoteRequest->wants_site_survey ? 'igen' : 'nem' }}
+@if ($quoteRequest->wants_site_survey)
+  - Helyszín címe: {{ $quoteRequest->site_survey_address }}
+  @if ($quoteRequest->site_survey_notes)
+  - Egyéb infó a felméréshez: {{ $quoteRequest->site_survey_notes }}
+  @endif
+@endif
 @endif
 @if ($quoteRequest->needed_by_date)
 - Legkésőbb szükséges dátum: {{ $quoteRequest->needed_by_date->format('Y.m.d.') }}

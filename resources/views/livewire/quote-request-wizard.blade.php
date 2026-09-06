@@ -109,16 +109,18 @@
             @if ($step === 2)
                 <h2 class="font-display text-2xl font-semibold text-ink mb-6">Projekt típusa és a tér jellege</h2>
                 <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-1">Épület/intézmény típusa *</label>
-                        <select wire:model="building_type" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
-                            <option value="">Válassz...</option>
-                            @foreach (\App\Livewire\QuoteRequestWizard::BUILDING_TYPES as $value => $label)
-                                <option value="{{ $value }}">{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        @error('building_type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+                    @unless ($this->hasSystem('tourguide_rendszer'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-1">Épület/intézmény típusa *</label>
+                            <select wire:model="building_type" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                <option value="">Válassz...</option>
+                                @foreach (\App\Livewire\QuoteRequestWizard::BUILDING_TYPES as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('building_type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    @endunless
 
                     <div>
                         <label class="block text-sm font-medium text-ink mb-2">Milyen rendszer érdekli? *</label>
@@ -230,27 +232,38 @@
 
                     @if ($this->hasSystem('konferenciarendszer'))
                         <div>
-                            <label class="block text-sm font-medium text-ink mb-1">Konferencia moderátorok száma</label>
+                            <label class="block text-sm font-medium text-ink mb-1">Tervezett konferencia max. létszáma</label>
                             <input type="number" min="0" wire:model="conference_moderator_count" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                         </div>
                     @endif
 
                     @unless ($this->hasSystem('tourguide_rendszer'))
                         <div x-data="multiFileUploader('floor_plans', 5)">
-                            <label class="block text-sm font-medium text-ink mb-1">Alaprajz feltöltése (PDF, JPG, PNG)</label>
+                            <label class="block text-sm font-medium text-ink mb-1">Alaprajz / helyszínrajz feltöltése (PDF, JPG, PNG)</label>
                             <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm" @change="handleChange($event)">
                             <div x-show="uploading" class="text-sm text-petrol-500 mt-1">Feltöltés... <span x-text="progress"></span>%</div>
                             <p x-show="errorMessage" x-text="errorMessage" class="mt-1 text-sm text-red-600"></p>
                             @error('floor_plans.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                             @error('floor_plans') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                             @if (!empty($floor_plans))
-                                <ul class="mt-2 text-sm text-ink/60 list-disc pl-5">
-                                    @foreach ($floor_plans as $file)
-                                        <li>{{ $file->getClientOriginalName() }}</li>
+                                <ul class="mt-2 text-sm text-ink/60 space-y-1">
+                                    @foreach ($floor_plans as $index => $file)
+                                        <li class="flex items-center gap-2">
+                                            <span class="truncate">{{ $file->getClientOriginalName() }}</span>
+                                            <button
+                                                type="button"
+                                                wire:click="removeFloorPlan({{ $index }})"
+                                                @click="selected.splice({{ $index }}, 1)"
+                                                class="shrink-0 text-ink/40 hover:text-red-600"
+                                                aria-label="Eltávolítás"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                        </li>
                                     @endforeach
                                 </ul>
                             @endif
-                            <p class="mt-2 text-xs text-ink/50">Ha van alaprajzod, töltsd fel — ez pontosítja a becslést, ha a méretek nem ismertek. Legfeljebb 5 fájl, egyenként max. 20 MB.</p>
+                            <p class="mt-2 text-xs text-ink/50">Ha van alaprajzod vagy helyszínrajzod, töltsd fel — ez pontosítja a becslést, ha a méretek nem ismertek. Egy kézzel rajzolt vázlatot is elfogadunk, ha azon jól látható a hangosítandó helyiség/terület elrendezése. Legfeljebb 5 fájl, egyenként max. 20 MB.</p>
                         </div>
                     @endunless
 
@@ -341,13 +354,24 @@
                     @endif
 
                     @if ($this->hasSystem('mobil_hangositas'))
+                        @php
+                            $mobileSpeakerHints = [
+                                'aktiv' => 'Beépített erősítőt tartalmaz, nem kell hozzá külön erősítő.',
+                                'passziv' => 'Nincs beépített erősítője, külön erősítőt kell hozzá csatlakoztatni.',
+                                'gurulos' => 'Akkumulátorral is rendelkezik, hálózati csatlakozás nélkül is használható.',
+                            ];
+                        @endphp
                         <div>
-                            <label class="block text-sm font-medium text-ink mb-2">Hangsugárzók jellege</label>
+                            <label class="block text-sm font-medium text-ink mb-2">Milyen típusú hangsugárzót szeretne?</label>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 @foreach (\App\Livewire\QuoteRequestWizard::MOBILE_SPEAKER_TYPES as $value => $label)
-                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
-                                        <input type="checkbox" wire:model="mobile_speaker_type" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                    <label class="flex items-center gap-2 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="mobile_speaker_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                                         <span class="text-sm text-ink">{{ $label }}</span>
+                                        <span
+                                            title="{{ $mobileSpeakerHints[$value] ?? '' }}"
+                                            class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-petrol-200 text-[10px] font-semibold text-petrol-900 cursor-help"
+                                        >i</span>
                                     </label>
                                 @endforeach
                             </div>
@@ -358,11 +382,16 @@
                             <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                                 @foreach (\App\Livewire\QuoteRequestWizard::AMPLIFIER_TYPES as $value => $label)
                                     <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
-                                        <input type="radio" wire:model="amplifier_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <input type="radio" wire:model.live="amplifier_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                                         <span class="text-sm text-ink">{{ $label }}</span>
                                     </label>
                                 @endforeach
                             </div>
+                            @if ($amplifier_type === 'nem_tudom')
+                                <div class="mt-3">
+                                    <textarea wire:model="amplifier_type_other" rows="2" placeholder="Írja le, mire gondol, vagy mit tud a meglévő/tervezett erősítőről" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors"></textarea>
+                                </div>
+                            @endif
                         </div>
                     @endif
 
@@ -437,17 +466,17 @@
                         <div class="space-y-3">
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" wire:model="needs_transport_case" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                <span class="text-sm font-medium text-ink">Kell szállító / töltő koffer?</span>
+                                <span class="text-sm font-medium text-ink">Szükséges-e szállító / töltő koffer?</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" wire:model="needs_fast_charger" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                <span class="text-sm font-medium text-ink">Kell gyorstöltő?</span>
+                                <span class="text-sm font-medium text-ink">Szükséges-e gyorstöltő?</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" wire:model="leads_small_groups" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                <span class="text-sm font-medium text-ink">Kisebb létszámú vezetett csoportokat vezet?</span>
+                                <span class="text-sm font-medium text-ink">Kisebb létszámú (max. 5 fő) vezetett csoportokat is vezet?</span>
                             </label>
-                            <p class="text-xs text-ink/50">Ehhez személyi beszéderősítő is elegendő lehet.</p>
+                            <p class="text-xs text-ink/50">Max. 5 fős csoportoknál személyi beszéderősítő is elegendő lehet.</p>
                         </div>
                     @endif
                 </div>
@@ -472,8 +501,16 @@
 
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Tervezett maximális keret (Ft)</label>
-                        <input type="text" wire:model="budget_huf" placeholder="pl. 1 500 000 Ft" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
-                        <p class="mt-2 text-xs text-ink/50">Nem kötelező, de segít reális, a kereteidhez illeszkedő javaslatot összeállítani.</p>
+                        <input
+                            type="text"
+                            inputmode="numeric"
+                            wire:model.live="budget_huf"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            placeholder="pl. 1500000"
+                            class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors"
+                        >
+                        @error('budget_huf') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <p class="mt-2 text-xs text-ink/50">Nem kötelező, de segít reális, a kereteidhez illeszkedő javaslatot összeállítani. Csak számot adj meg, Ft-ban (pl. 1500000).</p>
                     </div>
 
                     @if ($this->hasSystem('tourguide_rendszer'))
@@ -496,9 +533,31 @@
                                 <span class="text-sm font-medium text-ink">Kérek kivitelezésre is ajánlatot</span>
                             </label>
                             <label class="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" wire:model="wants_site_survey" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <input type="checkbox" wire:model.live="wants_site_survey" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                                 <span class="text-sm font-medium text-ink">Kérek előzetes helyszíni felmérést</span>
                             </label>
+                            @if ($wants_site_survey)
+                                <div class="rounded-2xl border-2 border-gold-500 bg-gold-50/40 p-5 space-y-3">
+                                    <p class="text-sm text-ink/80">A helyszíni felmérés <strong>fizetős szolgáltatás</strong>, amelyről külön ajánlatot küldünk. Ehhez kérjük az alábbi adatokat.</p>
+                                    <div>
+                                        <label class="block text-sm font-medium text-ink mb-1">Kapcsolattartó neve</label>
+                                        <input type="text" wire:model="name" class="w-full rounded-lg border-petrol-200 bg-white focus:border-petrol-500 focus:ring-petrol-500 transition-colors">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-ink mb-1">Helyszín címe *</label>
+                                        <input type="text" wire:model="site_survey_address" placeholder="Irányítószám, város, utca, házszám" class="w-full rounded-lg border-petrol-200 bg-white focus:border-petrol-500 focus:ring-petrol-500 transition-colors">
+                                        @error('site_survey_address') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-ink mb-1">Telefonszám</label>
+                                        <input type="tel" wire:model="phone" class="w-full rounded-lg border-petrol-200 bg-white focus:border-petrol-500 focus:ring-petrol-500 transition-colors">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-ink mb-1">Egyéb infó, ami segíthet a felmérés megszervezésében</label>
+                                        <textarea wire:model="site_survey_notes" rows="3" class="w-full rounded-lg border-petrol-200 bg-white focus:border-petrol-500 focus:ring-petrol-500 transition-colors"></textarea>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     @endif
 
@@ -512,7 +571,8 @@
 
             {{-- 5. lépés — Csatolmányok --}}
             @if ($step === 5)
-                <h2 class="font-display text-2xl font-semibold text-ink mb-6">Csatolmányok</h2>
+                <h2 class="font-display text-2xl font-semibold text-ink mb-2">Csatolmányok</h2>
+                <p class="text-sm text-ink/60 mb-6">A csatolmányokat azért kérjük, hogy már az ajánlatadási állapotban is a legmegfelelőbb műszaki konfigurációt tudjuk összeállítani. Amennyiben ez alapján nem tudunk pontos ajánlatot adni, felvesszük Önnel a kapcsolatot.</p>
                 <div class="space-y-6">
                     <div x-data="multiFileUploader('photos', 20)">
                         <label class="block text-sm font-medium text-ink mb-1">Fotók a helyszínről</label>
@@ -522,9 +582,20 @@
                         @error('photos.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         @error('photos') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         @if (!empty($photos))
-                            <ul class="mt-2 text-sm text-ink/60 list-disc pl-5">
-                                @foreach ($photos as $file)
-                                    <li>{{ $file->getClientOriginalName() }}</li>
+                            <ul class="mt-2 text-sm text-ink/60 space-y-1">
+                                @foreach ($photos as $index => $file)
+                                    <li class="flex items-center gap-2">
+                                        <span class="truncate">{{ $file->getClientOriginalName() }}</span>
+                                        <button
+                                            type="button"
+                                            wire:click="removePhoto({{ $index }})"
+                                            @click="selected.splice({{ $index }}, 1)"
+                                            class="shrink-0 text-ink/40 hover:text-red-600"
+                                            aria-label="Eltávolítás"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
+                                    </li>
                                 @endforeach
                             </ul>
                         @endif
@@ -537,7 +608,17 @@
                         <div wire:loading wire:target="video_file" class="text-sm text-petrol-500 mt-1">Feltöltés...</div>
                         @error('video_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         @if ($video_file)
-                            <p class="mt-2 text-sm text-ink/60">{{ $video_file->getClientOriginalName() }}</p>
+                            <p class="mt-2 text-sm text-ink/60 flex items-center gap-2">
+                                <span class="truncate">{{ $video_file->getClientOriginalName() }}</span>
+                                <button
+                                    type="button"
+                                    wire:click="removeVideoFile"
+                                    class="shrink-0 text-ink/40 hover:text-red-600"
+                                    aria-label="Eltávolítás"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </p>
                         @endif
                         <p class="mt-2 text-xs text-ink/50">Legfeljebb 100 MB méretű videófájl tölthető fel.</p>
                     </div>

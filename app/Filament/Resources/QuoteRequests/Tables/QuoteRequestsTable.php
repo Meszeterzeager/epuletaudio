@@ -6,8 +6,8 @@ use App\Filament\Resources\QuoteRequests\Schemas\QuoteRequestForm;
 use App\Models\QuoteRequest;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -56,6 +56,14 @@ class QuoteRequestsTable
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => QuoteRequest::STATUSES[$state] ?? $state),
+                IconColumn::make('is_processing')
+                    ->label('Feldolg.')
+                    ->boolean()
+                    ->toggleable(),
+                IconColumn::make('needs_clarification')
+                    ->label('Egyeztetés')
+                    ->boolean()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Beérkezett')
                     ->dateTime('Y-m-d H:i')
@@ -72,7 +80,6 @@ class QuoteRequestsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
