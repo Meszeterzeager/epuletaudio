@@ -78,22 +78,29 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-ink mb-1">Név *</label>
-                        <input type="text" wire:model="name" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <input type="text" wire:model="name" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                         @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Email *</label>
-                        <input type="email" wire:model="email" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <input type="email" wire:model="email" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                         @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Telefonszám *</label>
-                        <input type="tel" wire:model="phone" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <input
+                            type="tel"
+                            inputmode="tel"
+                            wire:model.live.debounce.400ms="phone"
+                            oninput="this.value = this.value.replace(/[^0-9+\-\s()]/g, '')"
+                            placeholder="+36 30 123 4567"
+                            class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors"
+                        >
                         @error('phone') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-ink mb-1">Cégnév / intézmény neve</label>
-                        <input type="text" wire:model="company" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <input type="text" wire:model="company" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                     </div>
                 </div>
             @endif
@@ -104,7 +111,7 @@
                 <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Épület/intézmény típusa *</label>
-                        <select wire:model="building_type" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <select wire:model="building_type" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                             <option value="">Válassz...</option>
                             @foreach (\App\Livewire\QuoteRequestWizard::BUILDING_TYPES as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
@@ -117,110 +124,330 @@
                         <label class="block text-sm font-medium text-ink mb-2">Milyen rendszer(ek) érdekli? *</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             @foreach (\App\Livewire\QuoteRequestWizard::REQUESTED_SYSTEMS as $value => $label)
-                                <label class="flex items-center gap-3 rounded-lg border border-petrol-100 px-4 py-3 cursor-pointer hover:border-petrol-500 transition-colors">
-                                    <input type="checkbox" wire:model="requested_systems" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                    <input type="checkbox" wire:model.live="requested_systems" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                                     <span class="text-sm text-ink">{{ $label }}</span>
                                 </label>
                             @endforeach
                         </div>
+                        <p class="mt-2 text-xs text-ink/50">Több rendszer is kiválasztható, ha egyszerre több megoldás is érdekel.</p>
                         @error('requested_systems') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-2">A tér / zóna jellege</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            @foreach (\App\Livewire\QuoteRequestWizard::SPACE_CHARACTERS as $value => $label)
-                                <label class="flex items-center gap-3 rounded-lg border border-petrol-100 px-4 py-3 cursor-pointer hover:border-petrol-500 transition-colors">
-                                    <input type="radio" wire:model="space_character" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                    <span class="text-sm text-ink">{{ $label }}</span>
-                                </label>
-                            @endforeach
+                    @if ($this->hasSystem('epulethangositas') || $this->hasSystem('mobil_hangositas'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">A tér / zóna jellege</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::SPACE_CHARACTERS as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="space_character" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <p class="mt-2 text-xs text-ink/50">Ez határozza meg, hogy milyen védettségű (pl. időjárásálló) eszközökre lesz szükség.</p>
                         </div>
-                    </div>
+                    @endif
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    @if ($this->hasSystem('epulethangositas'))
                         <div>
-                            <label class="block text-sm font-medium text-ink mb-1">Szélesség (m)</label>
-                            <input type="number" min="0" step="0.1" wire:model="width_m" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                            <label class="block text-sm font-medium text-ink mb-2">Hangrendszer típusa *</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::SOUND_SYSTEM_TYPES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="sound_system_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <ul class="mt-2 text-xs text-ink/50 list-disc pl-4 space-y-0.5">
+                                @foreach (\App\Livewire\QuoteRequestWizard::SOUND_SYSTEM_TYPE_HINTS as $value => $hint)
+                                    <li><strong>{{ \App\Livewire\QuoteRequestWizard::SOUND_SYSTEM_TYPES[$value] }}:</strong> {{ $hint }}</li>
+                                @endforeach
+                            </ul>
+                            @error('sound_system_type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
+                    @endif
+
+                    @if ($this->hasSystem('konferenciarendszer'))
                         <div>
-                            <label class="block text-sm font-medium text-ink mb-1">Hosszúság (m)</label>
-                            <input type="number" min="0" step="0.1" wire:model="length_m" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                            <label class="block text-sm font-medium text-ink mb-2">Használt tér típusa *</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::CONFERENCE_ROOM_TYPES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="conference_room_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('conference_room_type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
+                    @endif
+
+                    @if ($this->hasSystem('tourguide_rendszer'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">Milyen típusú vezetett túrára használná? *</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::TOUR_TYPES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="tour_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('tour_type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('epulethangositas'))
                         <div>
                             <label class="block text-sm font-medium text-ink mb-1">Belmagasság (m)</label>
-                            <input type="number" min="0" step="0.1" wire:model="ceiling_height_m" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                            <input type="number" min="0" step="0.1" wire:model="ceiling_height_m" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                         </div>
-                    </div>
+                    @endif
+
+                    @if ($this->hasSystem('epulethangositas'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-1">Becsült alapterület (m²) *</label>
+                            <input type="number" min="0" step="0.1" wire:model="area_sqm" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                            @error('area_sqm') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            <p class="mt-2 text-xs text-ink/50">Minél pontosabb a becslés, annál pontosabb ajánlatot tudunk adni már helyszíni felmérés nélkül is — a belmagasság elhagyható, ha nem ismert.</p>
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('mobil_hangositas'))
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-1">Mekkora létszámot kell kihangosítani?</label>
+                                <input type="number" min="0" wire:model="mobile_headcount" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-1">Mekkora területen?</label>
+                                <input type="text" wire:model="mobile_area_size" placeholder="pl. 150 m², kültéri" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('konferenciarendszer'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-1">Konferencia moderátorok száma</label>
+                            <input type="number" min="0" wire:model="conference_moderator_count" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                        </div>
+                    @endif
+
+                    @unless ($this->hasSystem('tourguide_rendszer'))
+                        <div x-data="multiFileUploader('floor_plans', 5)">
+                            <label class="block text-sm font-medium text-ink mb-1">Alaprajz feltöltése (PDF, JPG, PNG)</label>
+                            <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm" @change="handleChange($event)">
+                            <div x-show="uploading" class="text-sm text-petrol-500 mt-1">Feltöltés... <span x-text="progress"></span>%</div>
+                            <p x-show="errorMessage" x-text="errorMessage" class="mt-1 text-sm text-red-600"></p>
+                            @error('floor_plans.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            @error('floor_plans') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                            @if (!empty($floor_plans))
+                                <ul class="mt-2 text-sm text-ink/60 list-disc pl-5">
+                                    @foreach ($floor_plans as $file)
+                                        <li>{{ $file->getClientOriginalName() }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                            <p class="mt-2 text-xs text-ink/50">Ha van alaprajzod, töltsd fel — ez pontosítja a becslést, ha a méretek nem ismertek. Legfeljebb 5 fájl, egyenként max. 20 MB.</p>
+                        </div>
+                    @endunless
+
+                    @if ($this->hasSystem('epulethangositas'))
+                        <div>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model.live="has_suspended_ceiling" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Van álmennyezet a térben</span>
+                            </label>
+                            <p class="mt-2 text-xs text-ink/50">Ez befolyásolja, hogy a hangfalak süllyeszthetők-e a mennyezetbe, vagy más rögzítési módra lesz szükség.</p>
+                            @if ($has_suspended_ceiling)
+                                <div class="mt-3">
+                                    <label class="block text-sm font-medium text-ink mb-1">Milyen típusú álmennyezet?</label>
+                                    <input type="text" wire:model="suspended_ceiling_type" placeholder="pl. gipszkarton, ásványgyapot kazetta, fém lamella" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('konferenciarendszer'))
+                        <div>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model="has_room_sound_system" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Van a helyiségben hangrendszer, és szeretné azon keresztül használni?</span>
+                            </label>
+                        </div>
+                    @endif
                 </div>
             @endif
 
-            {{-- 3. lépés — Hangfal-preferencia, stádium, forráseszközök --}}
+            {{-- 3. lépés — Rendszer és eszközök --}}
             @if ($step === 3)
                 <h2 class="font-display text-2xl font-semibold text-ink mb-6">Rendszer és eszközök</h2>
                 <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-2">Hangsugárzók jellege</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            @foreach (\App\Livewire\QuoteRequestWizard::SPEAKER_PREFERENCES as $value => $label)
-                                <label class="flex items-center gap-3 rounded-lg border border-petrol-100 px-4 py-3 cursor-pointer hover:border-petrol-500 transition-colors">
-                                    <input type="checkbox" wire:model="speaker_preference" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                    <span class="text-sm text-ink">{{ $label }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-2">Milyen stádiumban van a létesítmény?</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            @foreach (\App\Livewire\QuoteRequestWizard::PROJECT_STAGES as $value => $label)
-                                <label class="flex items-center gap-3 rounded-lg border border-petrol-100 px-4 py-3 cursor-pointer hover:border-petrol-500 transition-colors">
-                                    <input type="radio" wire:model="project_stage" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                    <span class="text-sm text-ink">{{ $label }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-2">Milyen forráseszközöket fog használni?</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            @foreach (\App\Livewire\QuoteRequestWizard::SOURCE_EQUIPMENT as $value => $label)
-                                <label class="flex items-center gap-3 rounded-lg border border-petrol-100 px-4 py-3 cursor-pointer hover:border-petrol-500 transition-colors">
-                                    <input type="checkbox" wire:model="source_equipment" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                                    <span class="text-sm text-ink">{{ $label }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    @if ($this->hasSystem('epulethangositas'))
                         <div>
-                            <label class="block text-sm font-medium text-ink mb-1">Helyiségek / zónák száma</label>
-                            <input type="number" min="0" wire:model="room_count" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                            <label class="block text-sm font-medium text-ink mb-2">Hangsugárzók jellege</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::SPEAKER_PREFERENCES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="checkbox" wire:model="speaker_preference" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <p class="mt-2 text-xs text-ink/50">Ha nem vagy biztos benne, hagyd üresen — a helyszín és a rendszertípus alapján javaslatot teszünk.</p>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-ink mb-1">Hangforrások száma</label>
-                            <input type="number" min="0" wire:model="source_count" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium text-ink mb-1">Becsült alapterület (m²) *</label>
-                            <input type="number" min="0" step="0.1" wire:model="area_sqm" class="w-full sm:w-1/2 rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
-                            @error('area_sqm') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
+                    @endif
 
-                    <div>
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" wire:model.live="existing_system" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                            <span class="text-sm font-medium text-ink">Van már meglévő hangrendszer</span>
-                        </label>
-                    </div>
-                    @if ($existing_system)
+                    @if ($this->hasSystem('konferenciarendszer'))
                         <div>
-                            <label class="block text-sm font-medium text-ink mb-1">Rövid leírás a meglévő rendszerről</label>
-                            <textarea wire:model="existing_system_notes" rows="3" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500"></textarea>
+                            <label class="block text-sm font-medium text-ink mb-2">A rendszer jellemzői</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-ink mb-1">Elnöki mikrofon mennyisége</label>
+                                    <input type="number" min="0" wire:model="conference_president_mic_count" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ink mb-1">Delegált mikrofon mennyisége</label>
+                                    <input type="number" min="0" wire:model="conference_delegate_mic_count" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ink mb-1">Hangrögzítés típusa</label>
+                                    <select wire:model="conference_recording_type" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                        <option value="">Válassz...</option>
+                                        @foreach (\App\Livewire\QuoteRequestWizard::CONFERENCE_RECORDING_TYPES as $value => $label)
+                                            <option value="{{ $value }}">{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ink mb-1">Helyiségben üzemelő hangrendszer típusa</label>
+                                    <select wire:model.live="conference_room_sound_system_type" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                        <option value="">Válassz...</option>
+                                        @foreach (\App\Livewire\QuoteRequestWizard::CONFERENCE_ROOM_SOUND_SYSTEM_TYPES as $value => $label)
+                                            <option value="{{ $value }}">{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @if ($conference_room_sound_system_type === 'egyeb')
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-sm font-medium text-ink mb-1">Kérjük, írja le</label>
+                                        <input type="text" wire:model="conference_room_sound_system_other" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('mobil_hangositas'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">Hangsugárzók jellege</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::MOBILE_SPEAKER_TYPES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="checkbox" wire:model="mobile_speaker_type" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">Erősítő típusa</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::AMPLIFIER_TYPES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="amplifier_type" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('epulethangositas') || $this->hasSystem('konferenciarendszer'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">
+                                {{ $this->hasSystem('konferenciarendszer') && ! $this->hasSystem('epulethangositas') ? 'Milyen stádiumban van a helyiség?' : 'Milyen stádiumban van a létesítmény?' }}
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::PROJECT_STAGES as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="project_stage" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($this->hasSystem('epulethangositas') || $this->hasSystem('mobil_hangositas'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">Milyen forráseszközöket fog használni?</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::SOURCE_EQUIPMENT as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="checkbox" wire:model.live="source_equipment" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @if (in_array('egyeb', $source_equipment, true))
+                                <div class="mt-3">
+                                    <input type="text" wire:model="source_equipment_other" placeholder="Kérjük, írja le" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                                </div>
+                            @endif
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-1">
+                                {{ $this->hasSystem('mobil_hangositas') && ! $this->hasSystem('epulethangositas') ? 'Hány helyszínen / csoportnál szükséges egyszerre a hangosítás?' : 'Helyiségek / zónák száma' }}
+                            </label>
+                            <input type="number" min="0" wire:model="room_count" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                            <p class="mt-2 text-xs text-ink/50">Ez segít felmérni a rendszer méretét és a szükséges zónavezérlés bonyolultságát.</p>
+                        </div>
+
+                        <div>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model.live="existing_system" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Van már meglévő hangrendszer</span>
+                            </label>
+                        </div>
+                        @if ($existing_system)
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-1">Rövid leírás a meglévő rendszerről</label>
+                                <textarea wire:model="existing_system_notes" rows="3" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors"></textarea>
+                            </div>
+                        @endif
+                    @endif
+
+                    @if ($this->hasSystem('tourguide_rendszer'))
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-1">Csoport létszáma</label>
+                                <input type="number" min="0" wire:model="group_size" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-1">Túravezetők száma</label>
+                                <input type="number" min="0" wire:model="tour_guide_count" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model="needs_transport_case" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Kell szállító / töltő koffer?</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model="needs_fast_charger" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Kell gyorstöltő?</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model="leads_small_groups" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Kisebb létszámú vezetett csoportokat vezet?</span>
+                            </label>
+                            <p class="text-xs text-ink/50">Ehhez személyi beszéderősítő is elegendő lehet.</p>
                         </div>
                     @endif
                 </div>
@@ -234,28 +461,51 @@
                         <label class="block text-sm font-medium text-ink mb-2">Mi a fontosabb szempont Önnek?</label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             @foreach (\App\Livewire\QuoteRequestWizard::PRIORITIES as $value => $label)
-                                <label class="flex items-center gap-3 rounded-lg border border-petrol-100 px-4 py-3 cursor-pointer hover:border-petrol-500 transition-colors">
+                                <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
                                     <input type="radio" wire:model="priority" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                                     <span class="text-sm text-ink">{{ $label }}</span>
                                 </label>
                             @endforeach
                         </div>
+                        <p class="mt-2 text-xs text-ink/50">Ez segít abban, hogy a számodra legjobb ár-érték arányú megoldást ajánljuk.</p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Tervezett maximális keret (Ft)</label>
-                        <input type="text" wire:model="budget_huf" placeholder="pl. 1 500 000 Ft" class="w-full sm:w-1/2 rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <input type="text" wire:model="budget_huf" placeholder="pl. 1 500 000 Ft" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                        <p class="mt-2 text-xs text-ink/50">Nem kötelező, de segít reális, a kereteidhez illeszkedő javaslatot összeállítani.</p>
                     </div>
 
-                    <div class="space-y-3">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" wire:model="wants_installation" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                            <span class="text-sm font-medium text-ink">Kérek kivitelezésre is ajánlatot</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" wire:model="wants_site_survey" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
-                            <span class="text-sm font-medium text-ink">Kérek előzetes helyszíni felmérést</span>
-                        </label>
+                    @if ($this->hasSystem('tourguide_rendszer'))
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-2">Kézbesítés módja</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @foreach (\App\Livewire\QuoteRequestWizard::DELIVERY_METHODS as $value => $label)
+                                    <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
+                                        <input type="radio" wire:model="delivery_method" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                        <span class="text-sm text-ink">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('delivery_method') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    @else
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model="wants_installation" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Kérek kivitelezésre is ajánlatot</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" wire:model="wants_site_survey" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                <span class="text-sm font-medium text-ink">Kérek előzetes helyszíni felmérést</span>
+                            </label>
+                        </div>
+                    @endif
+
+                    <div>
+                        <p class="text-sm text-ink/80">Az ajánlat elkészítéséhez és a szállítás megfelelő ütemezéséhez szeretnénk pontosítani, hogy legkésőbb mikorra lenne szüksége az ajánlatra.</p>
+                        <input type="date" wire:model="needed_by_date" class="mt-3 w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
+                        @error('needed_by_date') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             @endif
@@ -264,25 +514,13 @@
             @if ($step === 5)
                 <h2 class="font-display text-2xl font-semibold text-ink mb-6">Csatolmányok</h2>
                 <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-1">Alaprajz (PDF, JPG, PNG)</label>
-                        <input type="file" wire:model="floor_plans" multiple accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm">
-                        <div wire:loading wire:target="floor_plans" class="text-sm text-petrol-500 mt-1">Feltöltés...</div>
-                        @error('floor_plans.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                        @if (!empty($floor_plans))
-                            <ul class="mt-2 text-sm text-ink/60 list-disc pl-5">
-                                @foreach ($floor_plans as $file)
-                                    <li>{{ $file->getClientOriginalName() }}</li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-
-                    <div>
+                    <div x-data="multiFileUploader('photos', 20)">
                         <label class="block text-sm font-medium text-ink mb-1">Fotók a helyszínről</label>
-                        <input type="file" wire:model="photos" multiple accept="image/*" class="block w-full text-sm">
-                        <div wire:loading wire:target="photos" class="text-sm text-petrol-500 mt-1">Feltöltés...</div>
+                        <input type="file" multiple accept="image/*" class="block w-full text-sm" @change="handleChange($event)">
+                        <div x-show="uploading" class="text-sm text-petrol-500 mt-1">Feltöltés... <span x-text="progress"></span>%</div>
+                        <p x-show="errorMessage" x-text="errorMessage" class="mt-1 text-sm text-red-600"></p>
                         @error('photos.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @error('photos') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         @if (!empty($photos))
                             <ul class="mt-2 text-sm text-ink/60 list-disc pl-5">
                                 @foreach ($photos as $file)
@@ -290,11 +528,23 @@
                                 @endforeach
                             </ul>
                         @endif
+                        <p class="mt-2 text-xs text-ink/50">Egyszerre vagy több lépésben is feltölthetők a fotók, legfeljebb 20 db, egyenként max. 20 MB.</p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-ink mb-1">Videó link (YouTube / Drive)</label>
-                        <input type="url" wire:model="video_url" placeholder="https://..." class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <label class="block text-sm font-medium text-ink mb-1">Videó feltöltése</label>
+                        <input type="file" wire:model="video_file" accept="video/*" class="block w-full text-sm">
+                        <div wire:loading wire:target="video_file" class="text-sm text-petrol-500 mt-1">Feltöltés...</div>
+                        @error('video_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        @if ($video_file)
+                            <p class="mt-2 text-sm text-ink/60">{{ $video_file->getClientOriginalName() }}</p>
+                        @endif
+                        <p class="mt-2 text-xs text-ink/50">Legfeljebb 100 MB méretű videófájl tölthető fel.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-ink mb-1">Vagy videó link (YouTube / Drive)</label>
+                        <input type="url" wire:model="video_url" placeholder="https://..." class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                         @error('video_url') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -306,11 +556,11 @@
                 <div class="space-y-5">
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Megjegyzés</label>
-                        <textarea wire:model="message" rows="4" class="w-full rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500"></textarea>
+                        <textarea wire:model="message" rows="4" class="w-full rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink mb-1">Tervezett kivitelezési időszak</label>
-                        <input type="text" wire:model="preferred_timeframe" placeholder="pl. 2026 Q3" class="w-full sm:w-1/2 rounded-lg border-petrol-100 focus:border-petrol-500 focus:ring-petrol-500">
+                        <input type="text" wire:model="preferred_timeframe" placeholder="pl. 2026 Q3" class="w-full sm:w-1/2 rounded-lg border-petrol-200 bg-petrol-50/60 focus:border-petrol-500 focus:bg-white focus:ring-petrol-500 transition-colors">
                     </div>
                     <div>
                         <label class="flex items-start gap-3 cursor-pointer">

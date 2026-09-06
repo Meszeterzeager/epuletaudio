@@ -1,11 +1,30 @@
 /* Épületaudio — márkázott email téma (a Laravel alap markdown mail témájából, brand színekkel) */
 
+/* Betűtípusok — ugyanazok, mint a weboldalon; a legtöbb kliens nem tölti be
+   ezeket (@font-face email-ben csak részlegesen támogatott), ezért a
+   rendszer-betűtípus lánc marad az elsődleges, tényleges megjelenítő
+   fallback — a támogató klienseknél (pl. Apple Mail) viszont a márka
+   betűtípusaival jelenik meg a levél. */
+@font-face {
+    font-family: 'Instrument Sans';
+    src: url('https://epuletaudio.hu/fonts/instrument-sans-latin-500-normal.woff2') format('woff2');
+    font-weight: 400 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Fraunces';
+    src: url('https://epuletaudio.hu/fonts/fraunces-latin-600-normal.woff2') format('woff2');
+    font-weight: 500 700;
+    font-style: normal;
+}
+
 /* Base */
 
 body,
 body *:not(html):not(style):not(br):not(tr):not(code) {
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     position: relative;
 }
@@ -41,20 +60,23 @@ a img {
 
 h1 {
     color: #002828;
-    font-size: 20px;
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 22px;
     font-weight: 600;
     margin-top: 0;
     text-align: start;
 }
 
 h2 {
-    font-size: 17px;
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 18px;
     font-weight: 600;
     margin-top: 0;
     text-align: start;
 }
 
 h3 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
     font-size: 15px;
     font-weight: 600;
     margin-top: 0;

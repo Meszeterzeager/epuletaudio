@@ -75,6 +75,21 @@ class QuoteRequestInfolist
                             ->badge()
                             ->formatStateUsing(fn (string $state): string => QuoteRequestForm::REQUESTED_SYSTEMS[$state] ?? $state)
                             ->columnSpanFull(),
+                        TextEntry::make('sound_system_type')
+                            ->label('Hangrendszer típusa')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::SOUND_SYSTEM_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
+                        TextEntry::make('conference_room_type')
+                            ->label('Használt tér típusa')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::CONFERENCE_ROOM_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
+                        TextEntry::make('conference_moderator_count')
+                            ->label('Konferencia moderátorok száma')
+                            ->placeholder('-'),
+                        TextEntry::make('tour_type')
+                            ->label('Vezetett túra típusa')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::TOUR_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
                         TextEntry::make('width_m')
                             ->label('Szélesség (m)')
                             ->placeholder('-'),
@@ -87,6 +102,21 @@ class QuoteRequestInfolist
                         TextEntry::make('area_sqm')
                             ->label('Becsült alapterület (m²)')
                             ->placeholder('-'),
+                        TextEntry::make('mobile_headcount')
+                            ->label('Kihangosítandó létszám (mobil)')
+                            ->placeholder('-'),
+                        TextEntry::make('mobile_area_size')
+                            ->label('Terület (mobil)')
+                            ->placeholder('-'),
+                        IconEntry::make('has_suspended_ceiling')
+                            ->label('Van álmennyezet')
+                            ->boolean(),
+                        TextEntry::make('suspended_ceiling_type')
+                            ->label('Álmennyezet típusa')
+                            ->placeholder('-'),
+                        IconEntry::make('has_room_sound_system')
+                            ->label('Van hangrendszer a helyiségben, és azon keresztül szeretné használni')
+                            ->boolean(),
                     ]),
 
                 Section::make('Rendszer és eszközök')
@@ -98,8 +128,18 @@ class QuoteRequestInfolist
                             ->formatStateUsing(fn (string $state): string => QuoteRequestForm::SPEAKER_PREFERENCES[$state] ?? $state)
                             ->placeholder('-')
                             ->columnSpanFull(),
+                        TextEntry::make('mobile_speaker_type')
+                            ->label('Hangsugárzók jellege (mobil)')
+                            ->badge()
+                            ->formatStateUsing(fn (string $state): string => QuoteRequestForm::MOBILE_SPEAKER_TYPES[$state] ?? $state)
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                        TextEntry::make('amplifier_type')
+                            ->label('Erősítő típusa (mobil)')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::AMPLIFIER_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
                         TextEntry::make('project_stage')
-                            ->label('Létesítmény stádiuma')
+                            ->label('Létesítmény / helyiség stádiuma')
                             ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::PROJECT_STAGES[$state] ?? '-')
                             ->placeholder('-'),
                         TextEntry::make('source_equipment')
@@ -108,8 +148,11 @@ class QuoteRequestInfolist
                             ->formatStateUsing(fn (string $state): string => QuoteRequestForm::SOURCE_EQUIPMENT[$state] ?? $state)
                             ->placeholder('-')
                             ->columnSpanFull(),
+                        TextEntry::make('source_equipment_other')
+                            ->label('Forráseszköz — egyéb')
+                            ->placeholder('-'),
                         TextEntry::make('room_count')
-                            ->label('Helyiségek / zónák száma')
+                            ->label('Helyiségek / zónák (vagy helyszínek) száma')
                             ->placeholder('-'),
                         TextEntry::make('source_count')
                             ->label('Hangforrások száma')
@@ -121,6 +164,38 @@ class QuoteRequestInfolist
                             ->label('Meglévő rendszer leírása')
                             ->placeholder('-')
                             ->columnSpanFull(),
+                        TextEntry::make('conference_president_mic_count')
+                            ->label('Elnöki mikrofon mennyisége')
+                            ->placeholder('-'),
+                        TextEntry::make('conference_delegate_mic_count')
+                            ->label('Delegált mikrofon mennyisége')
+                            ->placeholder('-'),
+                        TextEntry::make('conference_recording_type')
+                            ->label('Hangrögzítés típusa')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::CONFERENCE_RECORDING_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
+                        TextEntry::make('conference_room_sound_system_type')
+                            ->label('Helyiségben üzemelő hangrendszer típusa')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::CONFERENCE_ROOM_SOUND_SYSTEM_TYPES[$state] ?? '-')
+                            ->placeholder('-'),
+                        TextEntry::make('conference_room_sound_system_other')
+                            ->label('Helyiségben üzemelő hangrendszer — egyéb')
+                            ->placeholder('-'),
+                        TextEntry::make('group_size')
+                            ->label('Csoport létszáma (tourguide)')
+                            ->placeholder('-'),
+                        TextEntry::make('tour_guide_count')
+                            ->label('Túravezetők száma (tourguide)')
+                            ->placeholder('-'),
+                        IconEntry::make('needs_transport_case')
+                            ->label('Kell szállító / töltő koffer (tourguide)')
+                            ->boolean(),
+                        IconEntry::make('needs_fast_charger')
+                            ->label('Kell gyorstöltő (tourguide)')
+                            ->boolean(),
+                        IconEntry::make('leads_small_groups')
+                            ->label('Kisebb létszámú csoportokat is vezet (tourguide)')
+                            ->boolean(),
                     ]),
 
                 Section::make('Prioritások és kivitelezés')
@@ -132,6 +207,14 @@ class QuoteRequestInfolist
                             ->placeholder('-'),
                         TextEntry::make('budget_huf')
                             ->label('Tervezett keret')
+                            ->placeholder('-'),
+                        TextEntry::make('needed_by_date')
+                            ->label('Legkésőbb szükséges dátum')
+                            ->date('Y.m.d.')
+                            ->placeholder('-'),
+                        TextEntry::make('delivery_method')
+                            ->label('Kézbesítés módja (tourguide)')
+                            ->formatStateUsing(fn (?string $state): string => QuoteRequestForm::DELIVERY_METHODS[$state] ?? '-')
                             ->placeholder('-'),
                         IconEntry::make('wants_installation')
                             ->label('Kivitelezésre is kér ajánlatot')

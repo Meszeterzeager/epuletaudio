@@ -37,7 +37,7 @@
 
             <h3>A) Kapcsolatfelvétel és Árajánlatkérés (Űrlapok, e-mail)</h3>
             <ul>
-                <li><strong>Kezelt adatok:</strong> Név, e-mail cím, telefonszám, cégnév, a megkeresés/projekt leírása.</li>
+                <li><strong>Kezelt adatok:</strong> Név, e-mail cím, telefonszám, cégnév, a megkeresés/projekt leírása, valamint az érintett által önkéntesen átadott képek, alaprajzok és videók, amennyiben ezeket a helyszín/projekt felmérésének megkönnyítése érdekében csatolja.</li>
                 <li><strong>Adatkezelés célja:</strong> Kapcsolattartás, árajánlat készítése, műszaki egyeztetés, helyszíni felmérés megszervezése.</li>
                 <li><strong>Jogalap:</strong> A GDPR 6. cikk (1) bekezdés b) pontja (szerződést megelőző lépések megtétele az érintett kérésére).</li>
                 <li><strong>Adatmegőrzési idő:</strong> Az ajánlat érvényességi idejének lejártáig, vagy a létrejött szerződés teljesítésétől számított 5 évig (elévülési idő). Ajánlat elutasítása esetén az adatok 6 hónapon belül törlésre kerülnek.</li>
