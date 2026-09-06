@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\QuoteRequests\RelationManagers;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -14,6 +15,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
 
 class FilesRelationManager extends RelationManager
 {
@@ -33,6 +35,7 @@ class FilesRelationManager extends RelationManager
                     ->required(),
                 FileUpload::make('path')
                     ->label('Fájl')
+                    ->disk('local')
                     ->directory('quote-requests')
                     ->visibility('private'),
                 TextInput::make('url')
@@ -56,7 +59,9 @@ class FilesRelationManager extends RelationManager
                     })
                     ->badge(),
                 TextColumn::make('path')
-                    ->label('Fájl'),
+                    ->label('Fájl')
+                    ->formatStateUsing(fn (?string $state): ?string => $state ? basename($state) : null)
+                    ->placeholder('-'),
                 TextColumn::make('url')
                     ->label('Videó link')
                     ->url(fn (?string $state): ?string => $state)
@@ -66,6 +71,14 @@ class FilesRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->recordActions([
+                Action::make('download')
+                    ->label('Megnyitás')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->visible(fn ($record): bool => filled($record->path) && Storage::disk('local')->exists($record->path))
+                    ->action(fn ($record) => response()->download(
+                        Storage::disk('local')->path($record->path),
+                        basename($record->path)
+                    )),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

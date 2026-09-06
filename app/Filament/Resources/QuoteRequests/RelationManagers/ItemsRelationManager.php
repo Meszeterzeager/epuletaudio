@@ -28,7 +28,7 @@ class ItemsRelationManager extends RelationManager
 {
     protected static string $relationship = 'items';
 
-    protected static ?string $title = 'Tételek';
+    protected static ?string $title = 'Ajánlat';
 
     public function form(Schema $schema): Schema
     {
@@ -131,6 +131,16 @@ class ItemsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->defaultSort('order')
+            ->description(function (): string {
+                $record = $this->getOwnerRecord();
+                $itemCount = $record->items()->count();
+                $total = $record->items()->get()
+                    ->sum(fn ($item) => $item->quantity * (float) $item->unit_price);
+
+                $budget = $record->budget_huf ?: 'nincs megadva';
+
+                return "Ügyfél által megadott keret: {$budget}  •  Eddig hozzáadva: {$itemCount} tétel, összesen ".number_format($total, 0, ',', ' ').' Ft';
+            })
             ->columns([
                 ImageColumn::make('supplierProduct.image')
                     ->label('')
