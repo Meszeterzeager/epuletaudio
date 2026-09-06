@@ -146,7 +146,7 @@ class QuoteRequestWizard extends Component
     // 2. lépés — projekt típusa és tér jellege
     public string $building_type = '';
 
-    public array $requested_systems = [];
+    public string $requested_system = '';
 
     public string $space_character = '';
 
@@ -251,7 +251,7 @@ class QuoteRequestWizard extends Component
 
     public function hasSystem(string $key): bool
     {
-        return in_array($key, $this->requested_systems, true);
+        return $this->requested_system === $key;
     }
 
     public function updatedPhone(string $value): void
@@ -282,8 +282,7 @@ class QuoteRequestWizard extends Component
             ],
             2 => [
                 'building_type' => ['required', 'string', Rule::in(array_keys(self::BUILDING_TYPES))],
-                'requested_systems' => ['required', 'array', 'min:1'],
-                'requested_systems.*' => [Rule::in(array_keys(self::REQUESTED_SYSTEMS))],
+                'requested_system' => ['required', 'string', Rule::in(array_keys(self::REQUESTED_SYSTEMS))],
                 'space_character' => ['nullable', 'string', Rule::in(array_keys(self::SPACE_CHARACTERS))],
                 'sound_system_type' => [
                     Rule::requiredIf(fn () => $this->hasSystem('epulethangositas')),
@@ -370,7 +369,7 @@ class QuoteRequestWizard extends Component
             'phone.required' => 'A telefonszám megadása kötelező.',
             'phone.regex' => 'Kérjük, csak számokat és a szokásos telefonszám-jeleket (+, -, szóköz, zárójel) add meg.',
             'building_type.required' => 'Kérjük, válaszd ki az épület/intézmény típusát.',
-            'requested_systems.required' => 'Válassz ki legalább egy rendszert.',
+            'requested_system.required' => 'Válassz egy rendszert.',
             'sound_system_type.required' => 'Kérjük, válaszd ki a hangrendszer típusát.',
             'conference_room_type.required' => 'Kérjük, válaszd ki a használt tér típusát.',
             'tour_type.required' => 'Kérjük, válaszd ki, milyen típusú vezetett túrára használnád.',
@@ -455,7 +454,7 @@ class QuoteRequestWizard extends Component
             'phone' => $this->phone,
             'company' => $this->company ?: null,
             'building_type' => $this->building_type,
-            'requested_systems' => $this->requested_systems,
+            'requested_systems' => $this->requested_system ? [$this->requested_system] : [],
             'space_character' => $this->space_character ?: null,
             'sound_system_type' => $this->sound_system_type ?: null,
             'conference_room_type' => $this->conference_room_type ?: null,

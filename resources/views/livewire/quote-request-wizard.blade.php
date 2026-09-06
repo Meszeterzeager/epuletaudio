@@ -121,17 +121,17 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-ink mb-2">Milyen rendszer(ek) érdekli? *</label>
+                        <label class="block text-sm font-medium text-ink mb-2">Milyen rendszer érdekli? *</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             @foreach (\App\Livewire\QuoteRequestWizard::REQUESTED_SYSTEMS as $value => $label)
                                 <label class="flex items-center gap-3 rounded-lg border border-petrol-200 bg-petrol-50/60 px-4 py-3 cursor-pointer hover:border-petrol-500 has-[:checked]:border-petrol-500 has-[:checked]:bg-petrol-100 transition-colors">
-                                    <input type="checkbox" wire:model.live="requested_systems" value="{{ $value }}" class="rounded border-petrol-300 text-petrol-900 focus:ring-petrol-500">
+                                    <input type="radio" wire:model.live="requested_system" value="{{ $value }}" class="border-petrol-300 text-petrol-900 focus:ring-petrol-500">
                                     <span class="text-sm text-ink">{{ $label }}</span>
                                 </label>
                             @endforeach
                         </div>
-                        <p class="mt-2 text-xs text-ink/50">Több rendszer is kiválasztható, ha egyszerre több megoldás is érdekel.</p>
-                        @error('requested_systems') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <p class="mt-2 text-xs text-ink/50">Ha több rendszer típusra is szükséged van, kérjük, jelezd ezt a végén, a Megjegyzés mezőben.</p>
+                        @error('requested_system') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
                     @if ($this->hasSystem('epulethangositas') || $this->hasSystem('mobil_hangositas'))
