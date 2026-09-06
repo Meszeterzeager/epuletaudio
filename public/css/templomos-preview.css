@@ -4,6 +4,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: #042f2f; color: #faf7f2; font-family: 'Instrument Sans', Arial, sans-serif; }
 #church-hero { min-height: 100svh; isolation: isolate; overflow: hidden; position: relative; background: #042f2f; }
+#preview-hero { min-height: 100svh; isolation: isolate; overflow: hidden; position: relative; background: #042f2f; }
 .hero-image, .hero-overlay, .signal-overlay { position: absolute; inset: 0; height: 100%; width: 100%; }
 .hero-image { object-fit: cover; object-position: center; transform: scale(1.015); will-change: transform; }
 .hero-overlay { pointer-events: none; }
@@ -12,6 +13,8 @@ body { margin: 0; background: #042f2f; color: #faf7f2; font-family: 'Instrument 
 .signal-overlay { pointer-events: none; }
 .church-signal-path { stroke: url(#church-signal); stroke-width: 2.4; opacity: .78; }
 .church-signal-glow { stroke: #d99a5c; stroke-width: 8; opacity: .18; filter: url(#church-glow); }
+#preview-hero .church-signal-path { stroke: url(#conference-signal); stroke-width: 2.4; opacity: .78; }
+#preview-hero .church-signal-glow { stroke: #d99a5c; stroke-width: 8; opacity: .18; filter: url(#conference-glow); }
 .hero-content-wrap { position: relative; z-index: 1; margin: 0 auto; display: flex; min-height: 100svh; max-width: 1280px; align-items: center; padding: 5rem 3rem; }
 .hero-content { max-width: 540px; }
 .eyebrow { margin: 0; color: #d99a5c; font-size: .82rem; font-weight: 700; letter-spacing: .23em; text-transform: uppercase; }

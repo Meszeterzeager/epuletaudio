@@ -16,6 +16,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Külön, navigáció nélküli hero-előnézet. A főoldalt nem érinti.
 Route::view('/templomos', 'templomos')->name('templomos.preview');
 Route::view('/templom', 'templomos')->name('templom.preview');
+Route::view('/targyalo', 'targyalo')->name('targyalo.preview');
+Route::view('/etterem', 'etterem')->name('etterem.preview');
 
 Route::post('/webhooks/resend/inbound', [ResendInboundWebhookController::class, 'handle'])
     ->middleware('throttle:60,1')

@@ -3,6 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    @production
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F28Q35VH73"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-F28Q35VH73');
+    </script>
+    @endproduction
     @php
         $pageTitle = isset($title) ? $title.' — '.config('app.name') : config('app.name').' — épülethangosítás, konferenciarendszerek, tourguide-rendszerek';
         $pageDescription = $metaDescription ?? 'Épülethangosítás, konferenciarendszerek, tourguide-rendszerek és mobil hangosítás megoldások.';

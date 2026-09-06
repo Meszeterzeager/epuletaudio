@@ -2,7 +2,7 @@
     $faqItems = [
         [
             'question' => 'Mennyibe kerül egy épülethangosítási rendszer?',
-            'answer' => 'Az ár mindig a helyszíntől, a tér méretétől és a kért rendszertípustól függ. A helyszíni felmérés nem díjmentes, de ha fotókat, videókat és a pontos címet (a kiszállás megtervezéséhez) elküldöd az <a href="'.route('quote.create').'" class="underline hover:text-petrol-900">ajánlatkérő űrlapon</a>, ezek alapján már helyszíni felmérés nélkül is nagyon pontos ajánlatot tudunk adni.',
+            'answer' => 'Az ár mindig a helyszíntől, a tér méretétől és a kért rendszertípustól függ. Ha kitöltöd az <a href="'.route('quote.create').'" class="underline hover:text-petrol-900">ajánlatkérő űrlapunkat</a> — benne fotókkal, videókkal és alaprajzzal, ha van —, ez a legtöbb esetben elég ahhoz, hogy helyszíni felmérés nélkül is pontos ajánlatot adjunk; kiszállásra csak ritkán, valóban indokolt esetben van szükség, és az nem díjmentes.',
         ],
         [
             'question' => 'Mennyi idő alatt készül el egy hangosítási projekt?',
@@ -22,7 +22,7 @@
         ],
         [
             'question' => 'Hogyan induljon el egy projekt?',
-            'answer' => 'Küldd el a projekt adatait, fotókat/videókat és a pontos címet az <a href="'.route('quote.create').'" class="underline hover:text-petrol-900">ajánlatkérő űrlapunkon</a> — ez alapján már helyszíni felmérés nélkül is pontos ajánlatot tudunk adni, amit igény esetén egy (díjköteles) helyszíni felmérés követhet.',
+            'answer' => 'Küldd el a projekt adatait, fotókat/videókat és a pontos címet az <a href="'.route('quote.create').'" class="underline hover:text-petrol-900">ajánlatkérő űrlapunkon</a> — ez alapján a legtöbb esetben helyszíni felmérés nélkül is pontos ajánlatot tudunk adni, amit igény esetén egy (díjköteles) helyszíni felmérés vagy konzultáció követhet.',
         ],
     ];
 @endphp

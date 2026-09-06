@@ -50,6 +50,16 @@
                             requestAnimationFrame(() => this.loop());
                         },
                         onMouseMove(event) {
+                            // Pause instead of speed-steering while the cursor is over a card
+                            // itself — otherwise a card near either edge of the strip (like the
+                            // first one) gets assigned near-maximum speed the moment someone
+                            // approaches it, and it scrolls out from under the click before it
+                            // registers. Hovering the empty space between/around cards still
+                            // steers the speed by position, same as before.
+                            if (event.target.closest('a')) {
+                                this.targetSpeed = 0;
+                                return;
+                            }
                             const rect = this.$refs.servicesStrip.getBoundingClientRect();
                             const ratio = (event.clientX - rect.left) / rect.width;
                             const centered = Math.min(1, Math.max(-1, (ratio - 0.5) * 2));

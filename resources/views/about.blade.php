@@ -53,7 +53,7 @@
             </div>
 
             <p class="mt-10 text-center text-ink/70 max-w-2xl mx-auto" data-animate="fade-up">
-                Mi a kezdetektől fogva a 100V-os és a professzionális telepített hangtechnika törvényszerűségeire építünk: mérésekkel, pontos teljesítmény-számítással és helyszíni felméréssel biztosítjuk az egyenletes lefedettséget.
+                Mi a kezdetektől fogva a 100V-os és a professzionális telepített hangtechnika törvényszerűségeire építünk: részletes igényfelméréssel, pontos teljesítmény-számítással és — a beküldött fotók, videók és alaprajzok alapján — gondos tervezéssel biztosítjuk az egyenletes lefedettséget.
             </p>
         </div>
     </section>
@@ -65,8 +65,8 @@
             <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-10" data-animate-group>
                 @foreach ([
                     [
-                        'title' => 'Helyszíni felmérés és akusztikai méretezés',
-                        'description' => 'Nem találgatunk. Megvizsgáljuk a terek méretét, a falak és burkolatok anyagát, a háttérzajt és a hasznosítási célt. Kiszámoljuk a szükséges hangszórók számát, típusát és a beszédérthetőségi tényezőket.',
+                        'title' => 'Igényfelmérés és akusztikai méretezés',
+                        'description' => 'Nem találgatunk. A beküldött fotók, videók és alaprajzok alapján megvizsgáljuk a terek méretét, a falak és burkolatok anyagát, a háttérzajt és a hasznosítási célt — ez a legtöbb esetben helyszíni kiszállás nélkül is elég a pontos tervezéshez. Kiszámoljuk a szükséges hangszórók számát, típusát és a beszédérthetőségi tényezőket.',
                     ],
                     [
                         'title' => 'Zónázott rendszertervezés',
@@ -114,6 +114,6 @@
 
     <x-cta-band
         :title="'Készen áll az Ön épületéhez illő rendszer megtervezésére?'"
-        :subtitle="'Ne kísérletezzen sablonos megoldásokkal. Kérjen helyszíni felmérést, és tervezzük meg együtt az épületéhez legközelebb álló audio infrastruktúrát!'"
+        :subtitle="'Ne kísérletezzen sablonos megoldásokkal. Kérjen ajánlatot, és tervezzük meg együtt az épületéhez legközelebb álló audio infrastruktúrát!'"
     />
 </x-layouts.app>
