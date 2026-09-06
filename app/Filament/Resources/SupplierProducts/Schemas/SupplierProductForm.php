@@ -22,10 +22,9 @@ class SupplierProductForm
                     ->required()
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
                 TextInput::make('name')
-                    ->required()
-                    ->disabled(fn (string $operation): bool => $operation === 'edit'),
+                    ->required(),
                 TextInput::make('sku')
-                    ->label('SKU')
+                    ->label('Cikkszám')
                     ->default(null)
                     ->disabled(fn (string $operation): bool => $operation === 'edit'),
                 TextInput::make('category')

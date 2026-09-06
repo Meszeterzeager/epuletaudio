@@ -6,8 +6,10 @@ use App\Filament\Resources\SupplierProducts\SupplierProductResource;
 use App\Models\SupplierProduct;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -24,12 +26,15 @@ class SupplierProductsTable
                     ->size(80)
                     ->extraImgAttributes(['style' => 'object-fit: contain !important; background-color: #f9fafb; border-radius: 0.25rem;'])
                     ->square(),
-                TextColumn::make('name')
+                TextInputColumn::make('name')
+                    ->label('Név')
+                    ->rules(['required', 'string', 'max:255'])
                     ->searchable(),
                 TextColumn::make('sku')
-                    ->label('SKU')
+                    ->label('Cikkszám')
                     ->searchable(),
-                TextColumn::make('category')
+                TextInputColumn::make('category')
+                    ->label('Kategória')
                     ->searchable(),
                 TextColumn::make('selling_price')
                     ->label('Eladási ár (nettó)')
@@ -82,14 +87,21 @@ class SupplierProductsTable
                 SelectFilter::make('category')
                     ->label('Kategória')
                     ->searchable()
-                    ->options(fn () => SupplierProduct::query()
-                        ->whereNotNull('category')
-                        ->where('category', '!=', '')
-                        ->distinct()
-                        ->orderBy('category')
-                        ->pluck('category', 'category')
-                        ->all()),
+                    ->options(function (Get $get) {
+                        $supplierId = $get('supplier_id');
+
+                        return SupplierProduct::query()
+                            ->when($supplierId, fn ($query) => $query->where('supplier_id', $supplierId))
+                            ->whereNotNull('category')
+                            ->where('category', '!=', '')
+                            ->distinct()
+                            ->orderBy('category')
+                            ->pluck('category', 'category')
+                            ->all();
+                    }),
             ])
+            ->defaultPaginationPageOption(50)
+            ->paginationPageOptions([50, 100, 'all'])
             ->recordUrl(fn ($record): string => SupplierProductResource::getUrl('edit', ['record' => $record]))
             ->toolbarActions([
                 BulkActionGroup::make([

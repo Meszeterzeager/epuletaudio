@@ -13,6 +13,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -37,13 +38,14 @@ class ProductsRelationManager extends RelationManager
                     ->disk('public')
                     ->size(48)
                     ->square(),
-                TextColumn::make('name')
+                TextInputColumn::make('name')
                     ->label('Név')
+                    ->rules(['required', 'string', 'max:255'])
                     ->searchable(),
                 TextColumn::make('sku')
-                    ->label('SKU')
+                    ->label('Cikkszám')
                     ->searchable(),
-                TextColumn::make('category')
+                TextInputColumn::make('category')
                     ->label('Kategória')
                     ->searchable(),
                 TextColumn::make('stock_status')
@@ -71,7 +73,8 @@ class ProductsRelationManager extends RelationManager
                 SelectFilter::make('category')
                     ->label('Kategória')
                     ->searchable()
-                    ->options(fn () => SupplierProduct::query()
+                    ->options(fn (): array => SupplierProduct::query()
+                        ->where('supplier_id', $this->getOwnerRecord()->id)
                         ->whereNotNull('category')
                         ->where('category', '!=', '')
                         ->distinct()

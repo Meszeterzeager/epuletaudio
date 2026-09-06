@@ -29,7 +29,7 @@ class SupplierProductInfolist
                 TextEntry::make('name')
                     ->label('Név'),
                 TextEntry::make('sku')
-                    ->label('SKU')
+                    ->label('Cikkszám')
                     ->placeholder('-'),
                 TextEntry::make('category')
                     ->label('Kategória')
