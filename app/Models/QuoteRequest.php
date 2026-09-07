@@ -66,6 +66,9 @@ class QuoteRequest extends Model
         'gdpr_consent',
         'status',
         'internal_notes',
+        'offer_number',
+        'system_description',
+        'delivery_weeks',
         'is_processing',
         'needs_clarification',
     ];
@@ -109,6 +112,18 @@ class QuoteRequest extends Model
     public function purchaseOrders(): HasMany
     {
         return $this->hasMany(PurchaseOrder::class);
+    }
+
+    public function offerNumber(): string
+    {
+        if ($this->offer_number) {
+            return $this->offer_number;
+        }
+
+        $next = max(10, ((int) static::query()->whereNotNull('offer_number')->lockForUpdate()->count() + 10));
+        $this->forceFill(['offer_number' => 'EA-'.str_pad((string) $next, 3, '0', STR_PAD_LEFT)])->saveQuietly();
+
+        return $this->offer_number;
     }
 
     public const STATUSES = [

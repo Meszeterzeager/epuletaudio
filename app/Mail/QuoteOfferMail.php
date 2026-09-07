@@ -4,9 +4,11 @@ namespace App\Mail;
 
 use App\Models\QuoteRequest;
 use App\Models\Setting;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
@@ -44,5 +46,17 @@ class QuoteOfferMail extends Mailable
                 'orderUrl' => URL::signedRoute('quote.order', ['quoteRequest' => $this->quoteRequest]),
             ],
         );
+    }
+
+    /** @return array<int, Attachment> */
+    public function attachments(): array
+    {
+        $quoteRequest = $this->quoteRequest->loadMissing('items.supplierProduct');
+        $quoteRequest->offerNumber();
+
+        return [
+            Attachment::fromData(fn () => Pdf::loadView('pdf.quote-offer', ['quoteRequest' => $quoteRequest, 'items' => $quoteRequest->items])->output(), $quoteRequest->offerNumber().'.pdf')->withMime('application/pdf'),
+            Attachment::fromData(fn () => Pdf::loadView('pdf.quote-request-summary', ['quoteRequest' => $quoteRequest])->output(), 'ugyfel-igeny-'.$quoteRequest->id.'.pdf')->withMime('application/pdf'),
+        ];
     }
 }

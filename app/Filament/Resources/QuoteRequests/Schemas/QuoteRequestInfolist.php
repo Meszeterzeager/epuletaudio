@@ -278,6 +278,12 @@ class QuoteRequestInfolist
                             ->dateTime()
                             ->placeholder('-'),
                     ]),
+                Section::make('Ajánlat adatai')
+                    ->schema([
+                        TextEntry::make('offer_number')->label('Ajánlatszám')->placeholder('Küldéskor generálódik'),
+                        TextEntry::make('delivery_weeks')->label('Szállítási határidő')->placeholder('2-3 hét'),
+                        TextEntry::make('system_description')->label('Rendszerleírás')->placeholder('-')->columnSpanFull(),
+                    ]),
             ]);
     }
 

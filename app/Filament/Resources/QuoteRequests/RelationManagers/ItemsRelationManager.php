@@ -113,10 +113,20 @@ class ItemsRelationManager extends RelationManager
                     ->default(null)
                     ->columnSpanFull(),
 
+                TextInput::make('group_name')
+                    ->label('Csoport neve')
+                    ->helperText('A PDF-ajánlatban csoportosító címsorként jelenik meg (pl. Csoport 1).')
+                    ->default(null),
+
                 TextInput::make('quantity')
                     ->label('Mennyiség')
                     ->numeric()
                     ->default(1)
+                    ->required(),
+
+                TextInput::make('unit')
+                    ->label('Egység')
+                    ->default('db')
                     ->required(),
 
                 TextInput::make('unit_price')
@@ -158,8 +168,12 @@ class ItemsRelationManager extends RelationManager
                     }),
                 TextColumn::make('title')
                     ->label('Megnevezés'),
+                TextColumn::make('group_name')
+                    ->label('Csoport')
+                    ->placeholder('-'),
                 TextColumn::make('quantity')
-                    ->label('Mennyiség'),
+                    ->label('Mennyiség')
+                    ->formatStateUsing(fn ($state, $record) => rtrim(rtrim(number_format((float) $state, 2, ',', ' '), '0'), ',').' '.$record->unit),
                 TextColumn::make('unit_price')
                     ->label('Egységár')
                     ->money(),

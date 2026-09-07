@@ -6,7 +6,9 @@ use App\Models\QuoteRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Envelope;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Queue\SerializesModels;
 
 class QuoteRequestConfirmation extends Mailable
@@ -29,5 +31,12 @@ class QuoteRequestConfirmation extends Mailable
         return new Content(
             markdown: 'emails.quote-request-confirmation',
         );
+    }
+
+    /** @return array<int, Attachment> */
+    public function attachments(): array
+    {
+        $quoteRequest = $this->quoteRequest;
+        return [Attachment::fromData(fn () => Pdf::loadView('pdf.quote-request-summary', ['quoteRequest' => $quoteRequest])->output(), 'ajanlatkeres-osszesito-'.$quoteRequest->id.'.pdf')->withMime('application/pdf')];
     }
 }

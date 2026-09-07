@@ -90,6 +90,7 @@ class QuoteRequestResource extends Resource
                     ->visible($record->items()->exists()),
             ])
             ->action(function (array $data, QuoteRequest $record): void {
+                $record->offerNumber();
                 $includeItems = (bool) ($data['include_items'] ?? false);
 
                 $mailable = new QuoteOfferMail($record, $data['message'], $includeItems);

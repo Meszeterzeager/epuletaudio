@@ -146,6 +146,20 @@ class QuoteRequestForm
                             ->default(null),
                     ]),
 
+                Section::make('Ajánlat adatai')
+                    ->description('Az ügyfélnek küldött PDF-ajánlatban jelenik meg.')
+                    ->schema([
+                        Textarea::make('system_description')
+                            ->label('Rendszerleírás')
+                            ->rows(6)
+                            ->default(null)
+                            ->columnSpanFull(),
+                        TextInput::make('delivery_weeks')
+                            ->label('Szállítási határidő')
+                            ->helperText('Szabadon szerkeszthető, pl. 2-3 hét.')
+                            ->default('2-3 hét'),
+                    ]),
+
                 Section::make('Projekt és tér')
                     ->columns(2)
                     ->schema([

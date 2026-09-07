@@ -14,7 +14,9 @@ class QuoteRequestItem extends Model
         'billable_service_id',
         'title',
         'description',
+        'group_name',
         'quantity',
+        'unit',
         'unit_price',
         'order',
     ];
