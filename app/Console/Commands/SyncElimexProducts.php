@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class SyncElimexProducts extends Command
 {
-    protected $signature = 'elimex:sync';
+    protected $signature = 'elimex:sync {--path= : Helyi Elimex árlista CSV-fájl (API helyett)}';
 
     protected $description = 'Az Elimex árlista API-ból frissíti a beszállítói termékeket (ár, kategória, készlet)';
 
@@ -31,15 +31,6 @@ class SyncElimexProducts extends Command
 
     public function handle(): int
     {
-        $username = config('services.elimex.username');
-        $password = config('services.elimex.password');
-
-        if (! $username || ! $password) {
-            $this->error('Az ELIMEX_API_USERNAME / ELIMEX_API_PASSWORD nincs beállítva.');
-
-            return self::FAILURE;
-        }
-
         $supplier = Supplier::where('email', 'info@elimex.hu')->first();
 
         if (! $supplier) {
@@ -48,21 +39,42 @@ class SyncElimexProducts extends Command
             return self::FAILURE;
         }
 
-        $this->info('Elimex árlista letöltése...');
+        $path = $this->option('path');
+        if ($path) {
+            if (! is_file($path)) {
+                $this->error("A fájl nem található: {$path}");
 
-        $response = Http::timeout(120)->get(config('services.elimex.url'), [
-            'username' => $username,
-            'password' => $password,
-            'currency' => 'HUF',
-        ]);
+                return self::FAILURE;
+            }
 
-        if ($response->failed()) {
-            $this->error('Az Elimex API hívás sikertelen: HTTP '.$response->status());
+            $this->info('Helyi Elimex árlista feldolgozása...');
+            $body = file_get_contents($path);
+        } else {
+            $username = config('services.elimex.username');
+            $password = config('services.elimex.password');
+            if (! $username || ! $password) {
+                $this->error('Az ELIMEX_API_USERNAME / ELIMEX_API_PASSWORD nincs beállítva.');
 
-            return self::FAILURE;
+                return self::FAILURE;
+            }
+
+            $this->info('Elimex árlista letöltése...');
+            $response = Http::timeout(120)->get(config('services.elimex.url'), [
+                'username' => $username,
+                'password' => $password,
+                'currency' => 'HUF',
+            ]);
+            if ($response->failed()) {
+                $this->error('Az Elimex API hívás sikertelen: HTTP '.$response->status());
+
+                return self::FAILURE;
+            }
+            $body = $response->body();
         }
 
-        $body = iconv('Windows-1250', 'UTF-8//TRANSLIT', $response->body());
+        if (! mb_check_encoding($body, 'UTF-8')) {
+            $body = iconv('Windows-1250', 'UTF-8//TRANSLIT', $body);
+        }
         $lines = preg_split('/\r\n|\r|\n/', $body);
 
         $headerIndex = null;
