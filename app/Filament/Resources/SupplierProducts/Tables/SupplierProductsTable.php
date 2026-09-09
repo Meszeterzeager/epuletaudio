@@ -6,7 +6,6 @@ use App\Filament\Resources\SupplierProducts\SupplierProductResource;
 use App\Models\SupplierProduct;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -87,18 +86,13 @@ class SupplierProductsTable
                 SelectFilter::make('category')
                     ->label('Kategória')
                     ->searchable()
-                    ->options(function (Get $get) {
-                        $supplierId = $get('supplier_id');
-
-                        return SupplierProduct::query()
-                            ->when($supplierId, fn ($query) => $query->where('supplier_id', $supplierId))
-                            ->whereNotNull('category')
-                            ->where('category', '!=', '')
-                            ->distinct()
-                            ->orderBy('category')
-                            ->pluck('category', 'category')
-                            ->all();
-                    }),
+                    ->options(fn (): array => SupplierProduct::query()
+                        ->whereNotNull('category')
+                        ->where('category', '!=', '')
+                        ->distinct()
+                        ->orderBy('category')
+                        ->pluck('category', 'category')
+                        ->all()),
             ])
             ->defaultPaginationPageOption(50)
             ->paginationPageOptions([50, 100, 'all'])
