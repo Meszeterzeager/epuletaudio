@@ -46,9 +46,13 @@ Route::view('/markaink', 'brands')->name('brands');
 
 Route::view('/ajanlatkeres', 'quote')->name('quote.create');
 
-Route::get('/ajanlat/megrendelem/{quoteRequest}', QuoteOrderController::class)
+Route::get('/ajanlat/megrendelem/{quoteRequest}', [QuoteOrderController::class, 'show'])
     ->middleware('signed')
     ->name('quote.order');
+
+Route::post('/ajanlat/megrendelem/{quoteRequest}/megerosites', [QuoteOrderController::class, 'confirm'])
+    ->middleware('signed')
+    ->name('quote.order.confirm');
 
 Route::view('/aszf', 'legal.terms')->name('legal.terms');
 Route::view('/adatkezelesi-tajekoztato', 'legal.privacy')->name('legal.privacy');

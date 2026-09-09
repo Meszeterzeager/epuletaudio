@@ -43,7 +43,7 @@ class QuoteOfferMail extends Mailable
                 'items' => $items,
                 'total' => $items->sum(fn ($item) => $item->quantity * (float) $item->unit_price),
                 'signatureHtml' => (string) Setting::get('email_signature', ''),
-                'orderUrl' => URL::signedRoute('quote.order', ['quoteRequest' => $this->quoteRequest]),
+                'orderUrl' => URL::temporarySignedRoute('quote.order', now()->addDays(30), ['quoteRequest' => $this->quoteRequest]),
             ],
         );
     }

@@ -121,7 +121,7 @@
     @endforeach
 
     <x-cta-band
-        :title="'Nem tudod, melyik márka illik az Ön projektjéhez?'"
-        :subtitle="'Nem kell eldöntened — mi választjuk ki a helyszínhez, a költségkerethez és az elvárt élettartamhoz illő komponenseket. Kérj ajánlatot, és megtervezzük együtt.'"
+        :title="'Több márkával dolgozunk'"
+        :subtitle="'Minden projekthez azt a márkát és komponenseket ajánljuk, amelyek a helyszínhez, a költségkerethez és az elvárt élettartamhoz a legjobban illenek.'"
     />
 </x-layouts.app>

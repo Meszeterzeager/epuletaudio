@@ -18,6 +18,8 @@ class BlogController extends Controller
 
     public function show(BlogPost $post)
     {
+        abort_unless($post->published_at && $post->published_at->isPast(), 404);
+
         return view('blog.show', ['post' => $post]);
     }
 }

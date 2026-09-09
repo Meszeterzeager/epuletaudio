@@ -7,21 +7,35 @@
             <h1 class="mt-6 font-display text-3xl sm:text-4xl font-semibold text-cream">
                 @if ($alreadyOrdered)
                     Ezt az ajánlatot már megrendelted
-                @else
+                @elseif ($confirmed)
                     Köszönjük a megrendelést!
+                @else
+                    Megrendeled az ajánlatot?
                 @endif
             </h1>
             <p class="mt-4 text-cream/70">
                 Kedves {{ $quoteRequest->name }}!
                 @if ($alreadyOrdered)
                     A rendszerünk szerint ezt az ajánlatot korábban már megrendelted — kollégáink dolgoznak rajta.
-                @else
+                @elseif ($confirmed)
                     Megrendelésedet rögzítettük, kollégáink megkezdik a beszerzést, és hamarosan felvesszük veled a kapcsolatot a részletekkel és a további lépésekkel kapcsolatban.
+                @else
+                    Az alábbi gombbal véglegesítheted a megrendelést — utána kollégáink megkezdik a beszerzést, és felvesszük veled a kapcsolatot a részletekkel.
                 @endif
             </p>
-            <a href="{{ route('home') }}" wire:navigate class="mt-8 inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-black hover:bg-gold-400 transition-colors">
-                Vissza a főoldalra
-            </a>
+
+            @if (! $alreadyOrdered && ! $confirmed)
+                <form method="POST" action="{{ $confirmUrl }}" class="mt-8 inline-block">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-black hover:bg-gold-400 transition-colors">
+                        Megrendelés véglegesítése
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('home') }}" wire:navigate class="mt-8 inline-flex items-center justify-center rounded-full bg-gold-500 px-8 py-4 text-base font-semibold text-black hover:bg-gold-400 transition-colors">
+                    Vissza a főoldalra
+                </a>
+            @endif
         </div>
     </section>
 </x-layouts.app>

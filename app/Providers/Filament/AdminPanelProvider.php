@@ -41,9 +41,10 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->profile()
-            ->multiFactorAuthentication([
-                AppAuthentication::make()->recoverable(),
-            ])
+            ->multiFactorAuthentication(
+                [AppAuthentication::make()->recoverable()],
+                isRequired: true,
+            )
             ->colors([
                 'primary' => Color::Amber,
             ])
