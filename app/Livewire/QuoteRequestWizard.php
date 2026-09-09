@@ -481,7 +481,17 @@ class QuoteRequestWizard extends Component
             return;
         }
 
-        $this->validate($this->rulesForStep(6));
+        // A felület lépésenként ellenőriz, de a Livewire művelet közvetlen
+        // meghívásával a korábbi lépések átugorhatók lennének. Beküldéskor
+        // ezért minden mezőt újra validálunk.
+        $this->validate(array_merge(
+            $this->rulesForStep(1),
+            $this->rulesForStep(2),
+            $this->rulesForStep(3),
+            $this->rulesForStep(4),
+            $this->rulesForStep(5),
+            $this->rulesForStep(6),
+        ));
 
         RateLimiter::hit($rateLimitKey, decaySeconds: 900);
 

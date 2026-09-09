@@ -10,17 +10,22 @@ class QuoteRequestStatsWidget extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
-        $total = QuoteRequest::count();
+        $counts = QuoteRequest::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $total = $counts->sum();
 
         return [
             Stat::make('Összes ajánlatkérés', (string) $total),
-            Stat::make('Új', (string) QuoteRequest::where('status', 'new')->count())
+            Stat::make('Új', (string) ($counts['new'] ?? 0))
                 ->color('danger'),
-            Stat::make('Ajánlat kiadva', (string) QuoteRequest::where('status', 'quote_issued')->count())
+            Stat::make('Ajánlat kiadva', (string) ($counts['quote_issued'] ?? 0))
                 ->color('info'),
-            Stat::make('Ajánlat lerendelve', (string) QuoteRequest::where('status', 'ordered')->count())
+            Stat::make('Ajánlat lerendelve', (string) ($counts['ordered'] ?? 0))
                 ->color('success'),
-            Stat::make('Ajánlat elhalasztva', (string) QuoteRequest::where('status', 'postponed')->count())
+            Stat::make('Ajánlat elhalasztva', (string) ($counts['postponed'] ?? 0))
                 ->color('warning'),
         ];
     }
