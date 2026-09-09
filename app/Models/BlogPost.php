@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\HtmlSanitizer;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class BlogPost extends Model
@@ -28,5 +30,13 @@ class BlogPost extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    protected function body(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value): ?string => HtmlSanitizer::sanitizeRichContent($value),
+            set: fn (?string $value): ?string => HtmlSanitizer::sanitizeRichContent($value),
+        );
     }
 }

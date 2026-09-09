@@ -262,7 +262,8 @@
 
                         <iframe
                             sandbox=""
-                            srcdoc="<style>body{margin:0;font-family:'Source Serif 4',ui-serif,Georgia,serif;font-size:15px;line-height:1.7;color:#201e1d;white-space:pre-wrap}</style>{{ $selectedMessage->body_html ?? nl2br(e($selectedMessage->body_text ?? '')) }}"
+                            referrerpolicy="no-referrer"
+                            srcdoc="<meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; img-src data:; style-src 'unsafe-inline'&quot;><style>body{margin:0;font-family:'Source Serif 4',ui-serif,Georgia,serif;font-size:15px;line-height:1.7;color:#201e1d;white-space:pre-wrap}</style>{{ $selectedMessage->body_html ?? nl2br(e($selectedMessage->body_text ?? '')) }}"
                             class="w-full bg-transparent"
                             style="border:none;min-height:16rem;max-width:680px;margin-bottom:24px"
                         ></iframe>

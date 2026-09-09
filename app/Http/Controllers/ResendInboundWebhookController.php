@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Services\Mailbox as MailboxService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -44,6 +45,25 @@ class ResendInboundWebhookController extends Controller
             return response('Missing email_id', 422);
         }
 
+        $lock = Cache::lock("resend-inbound:{$emailId}", 60);
+
+        if (! $lock->get()) {
+            return response('Already processing', 202);
+        }
+
+        try {
+            if (EmailMessage::where('resend_message_id', $emailId)->exists()) {
+                return response('Already processed', 200);
+            }
+
+            return $this->processReceivedEmail((string) $emailId);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    private function processReceivedEmail(string $emailId): Response
+    {
         $email = $this->fetchReceivedEmail((string) $emailId);
 
         if ($email === null) {
@@ -219,6 +239,14 @@ class ResendInboundWebhookController extends Controller
         $svixSignature = $request->header('svix-signature');
 
         if (blank($svixId) || blank($svixTimestamp) || blank($svixSignature)) {
+            return false;
+        }
+
+        $timestamp = filter_var($svixTimestamp, FILTER_VALIDATE_INT);
+
+        if ($timestamp === false || abs(now()->timestamp - $timestamp) > 300) {
+            Log::warning('Resend inbound webhook: lejárt vagy érvénytelen időbélyeg.');
+
             return false;
         }
 
