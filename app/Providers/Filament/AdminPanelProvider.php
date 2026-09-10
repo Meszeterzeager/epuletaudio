@@ -43,7 +43,10 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->multiFactorAuthentication(
                 [AppAuthentication::make()->recoverable()],
-                isRequired: true,
+                // A 2FA a profilban beállítható, de az első belépést nem
+                // akadályozhatja meg, amikor a felhasználónak még nincs
+                // hitelesítő alkalmazása összekapcsolva.
+                isRequired: false,
             )
             ->colors([
                 'primary' => Color::Amber,
